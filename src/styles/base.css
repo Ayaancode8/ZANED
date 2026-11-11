@@ -1,0 +1,67 @@
+@font-face {
+  font-family: 'Anton';
+  src: url('../../assets/fonts/anton-latin-400-normal.woff2') format('woff2');
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Belleza';
+  src: url('../../assets/fonts/belleza-latin-400-normal.woff2') format('woff2');
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Space Grotesk';
+  src: url('../../assets/fonts/space-grotesk-latin-400-normal.woff2') format('woff2');
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
+
+:root {
+  --color-ink: #202629;
+  --color-body: #4b555b;
+  --color-paper: #f5f6f5;
+  --color-silver: #e2e6e5;
+  --color-graphite: #bec7c8;
+  --color-ink-hover: #364249;
+  --font-display: 'Anton', 'Arial Narrow', sans-serif;
+  --font-description: 'Belleza', 'Optima', 'Candara', sans-serif;
+  --font-body: 'Space Grotesk', sans-serif;
+
+  font-family: var(--font-body);
+  color: var(--color-ink);
+  background: var(--color-paper);
+  font-synthesis: none;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  min-inline-size: 320px;
+  margin: 0;
+}
+
+button,
+a {
+  -webkit-tap-highlight-color: transparent;
+}
+
+::selection {
+  background: var(--color-ink);
+  color: var(--color-paper);
+}
+
+html {
+  scrollbar-color: var(--color-ink) var(--color-paper);
+}

@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Silk browser checks</title>
+    <style>
+      body { margin: 24px; font: 16px/1.5 system-ui, sans-serif; background: #f5f6f5; color: #202629; }
+      #fixture { width: 240px; height: 160px; }
+      .silk-container { background: linear-gradient(115deg, #f5f6f5, #e2e6e5 60%, #bec7c8); }
+      [data-status="failed"] { color: #9b2424; }
+    </style>
+  </head>
+  <body>
+    <h1>Silk browser checks</h1>
+    <button id="run" type="button">Run checks</button>
+    <ol id="results"></ol>
+    <div id="fixture"></div>
+    <script type="module">
+      import React from 'react';
+      import { createRoot } from 'react-dom/client';
+      import Silk from '/src/components/Silk.jsx';
+
+      const fixture = document.querySelector('#fixture');
+      const results = document.querySelector('#results');
+      const run = document.querySelector('#run');
+      const pause = ms => new Promise(resolve => setTimeout(resolve, ms));
+      async function until(predicate) {
+        const deadline = performance.now() + 8000;
+        while (!predicate()) {
+          if (performance.now() > deadline) throw new Error('Timed out waiting for the renderer');
+          await pause(20);
+        }
+      }
+      function check(condition, label) {
+        if (!condition) throw new Error(label);
+        const item = document.createElement('li');
+        item.textContent = `PASS: ${label}`;
+        results.append(item);
+      }
+
+      run.addEventListener('click', async () => {
+        run.disabled = true;
+        results.replaceChildren();
+        results.dataset.status = 'running';
+        const getContext = HTMLCanvasElement.prototype.getContext;
+        const drawArrays = WebGL2RenderingContext.prototype.drawArrays;
+        const matchMedia = window.matchMedia;
+        const hiddenDescriptor = Object.getOwnPropertyDescriptor(document, 'hidden');
+        const motion = new EventTarget();
+        motion.matches = false;
+        window.matchMedia = query => query === '(prefers-reduced-motion: reduce)' ? motion : matchMedia.call(window, query);
+        let hidden = false;
+        Object.defineProperty(document, 'hidden', { configurable: true, get: () => hidden });
+        let samples = 0;
+        let fingerprint = 0;
+        let range = 0;
+        let context;
+        let renderError = 0;
+        WebGL2RenderingContext.prototype.drawArrays = function (...args) {
+          const result = drawArrays.apply(this, args);
+          if (this.canvas.classList.contains('silk-canvas') && !this.getParameter(this.FRAMEBUFFER_BINDING)) {
+            context = this;
+            renderError ||= this.getError();
+            const pixels = new Uint8Array(this.drawingBufferWidth * this.drawingBufferHeight * 4);
+            this.readPixels(0, 0, this.drawingBufferWidth, this.drawingBufferHeight, this.RGBA, this.UNSIGNED_BYTE, pixels);
+            fingerprint = 0;
+            let min = 255;
+            let max = 0;
+            for (let i = 0; i < pixels.length; i += 4) {
+              fingerprint = Math.imul(fingerprint ^ pixels[i], 16777619) >>> 0;
+              min = Math.min(min, pixels[i]);
+              max = Math.max(max, pixels[i]);
+            }
+            range = max - min;
+            samples++;
+          }
+          return result;
+        };
+        const root = createRoot(fixture);
+        let key = 0;
+        const mount = async () => {
+          const previous = fixture.firstElementChild;
+          root.render(React.createElement(React.StrictMode, null,
+            React.createElement(Silk, { key: ++key, speed: 5, scale: 0.85, color: '#bec7c8', rotation: 0.2,
+              noiseIntensity: 0.35, sheen: 0.55, depth: 0.45, glow: 0, ripple: 0.6, wave: 1,
+              mouseInteraction: false, clickRipple: false, intro: false, lightMode: true, dpr: 1, 'aria-hidden': 'true' })));
+          await until(() => fixture.firstElementChild !== previous);
+        };
+
+        try {
+          await mount();
+          await until(() => samples > 2);
+          const canvas = fixture.querySelector('canvas');
+          check(canvas.width === 240 && canvas.height === 160, 'Background stays at DPR 1');
+          check(range > 20 && renderError === 0, 'Strict Mode renders real satin folds without WebGL errors, including with glow off');
+          check(fixture.firstElementChild.getAttribute('aria-hidden') === 'true', 'Decorative background stays hidden from assistive technology');
+          const initial = fingerprint;
+          await until(() => fingerprint !== initial);
+          check(true, 'Silk motion changes the rendered pixels');
+
+          motion.matches = true;
+          motion.dispatchEvent(new Event('change'));
+          await pause(100);
+          const reducedSamples = samples;
+          const frozen = fingerprint;
+          await pause(150);
+          check(samples === reducedSamples && fingerprint === frozen, 'Live reduced motion freezes the satin without a render loop');
+          motion.matches = false;
+          motion.dispatchEvent(new Event('change'));
+          await until(() => samples > reducedSamples);
+          check(true, 'Motion resumes when the preference changes back');
+
+          hidden = true;
+          document.dispatchEvent(new Event('visibilitychange'));
+          const hiddenSamples = samples;
+          await pause(150);
+          check(samples === hiddenSamples, 'Hidden pages stop rendering');
+          hidden = false;
+          document.dispatchEvent(new Event('visibilitychange'));
+          await until(() => samples > hiddenSamples);
+          check(true, 'Visible pages resume rendering');
+
+          fixture.style.marginTop = '200vh';
+          await pause(150);
+          const offscreenSamples = samples;
+          await pause(150);
+          check(samples === offscreenSamples, 'Offscreen backgrounds stop rendering');
+          fixture.style.marginTop = '0';
+          await until(() => samples > offscreenSamples);
+          check(true, 'Onscreen backgrounds resume rendering');
+
+          const loss = context.getExtension('WEBGL_lose_context');
+          if (!loss) throw new Error('WebGL context-loss testing is unavailable');
+          loss.loseContext();
+          await until(() => getComputedStyle(canvas).visibility === 'hidden');
+          check(getComputedStyle(fixture.firstElementChild).backgroundImage !== 'none', 'Context loss exposes the CSS silver fallback');
+
+          HTMLCanvasElement.prototype.getContext = function (type, ...args) {
+            return type === 'webgl2' ? null : getContext.call(this, type, ...args);
+          };
+          await mount();
+          check(getComputedStyle(fixture.querySelector('canvas')).visibility === 'hidden' &&
+            getComputedStyle(fixture.firstElementChild).backgroundImage !== 'none', 'Unavailable WebGL keeps the CSS fallback visible');
+          results.dataset.status = 'passed';
+        } catch (error) {
+          results.dataset.status = 'failed';
+          const item = document.createElement('li');
+          item.textContent = `FAIL: ${error.message}`;
+          results.append(item);
+        } finally {
+          root.unmount();
+          HTMLCanvasElement.prototype.getContext = getContext;
+          WebGL2RenderingContext.prototype.drawArrays = drawArrays;
+          window.matchMedia = matchMedia;
+          if (hiddenDescriptor) Object.defineProperty(document, 'hidden', hiddenDescriptor);
+          else delete document.hidden;
+          run.disabled = false;
+        }
+      });
+    </script>
+  </body>
+</html>

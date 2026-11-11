@@ -1,0 +1,342 @@
+[
+  {
+    "port": 4173,
+    "state": {
+      "trace": [
+        {
+          "id": 4,
+          "matches": true,
+          "at": 1266.6000000005588,
+          "fn": "()=>{N=R.matches,ht()}"
+        },
+        {
+          "id": 5,
+          "matches": true,
+          "at": 1266.800000000745,
+          "fn": "()=>$(G.matches)"
+        },
+        {
+          "id": 7,
+          "matches": true,
+          "at": 1267.7000000001863,
+          "fn": "()=>$(G.matches)"
+        },
+        {
+          "id": 9,
+          "matches": true,
+          "at": 1268,
+          "fn": "()=>{Mt=ce.matches,_.sim.fill(0),_.ripples=[],_.reveal=1,ae()}"
+        },
+        {
+          "id": 10,
+          "matches": true,
+          "at": 1268.1000000005588,
+          "fn": "()=>{Mt=ce.matches,_.sim.fill(0),_.ripples=[],_.reveal=1,ae()}"
+        },
+        {
+          "id": 11,
+          "matches": true,
+          "at": 1268.1000000005588,
+          "fn": "()=>{Mt=ce.matches,_.sim.fill(0),_.ripples=[],_.reveal=1,ae()}"
+        }
+      ],
+      "queries": [
+        {
+          "id": 0,
+          "query": "(prefers-reduced-motion: reduce)",
+          "matches": true,
+          "listeners": []
+        },
+        {
+          "id": 1,
+          "query": "(prefers-reduced-motion: reduce)",
+          "matches": true,
+          "listeners": [
+            "()=>{Ct.matches&&ue()}"
+          ]
+        },
+        {
+          "id": 2,
+          "query": "(prefers-reduced-motion: reduce)",
+          "matches": true,
+          "listeners": []
+        },
+        {
+          "id": 3,
+          "query": "(prefers-reduced-motion: reduce)",
+          "matches": true,
+          "listeners": []
+        },
+        {
+          "id": 4,
+          "query": "(prefers-reduced-motion: reduce)",
+          "matches": true,
+          "listeners": [
+            "()=>{N=R.matches,ht()}"
+          ]
+        },
+        {
+          "id": 5,
+          "query": "(prefers-reduced-motion: reduce)",
+          "matches": true,
+          "listeners": [
+            "()=>$(G.matches)"
+          ]
+        },
+        {
+          "id": 7,
+          "query": "(prefers-reduced-motion: reduce)",
+          "matches": true,
+          "listeners": [
+            "()=>$(G.matches)"
+          ]
+        },
+        {
+          "id": 9,
+          "query": "(prefers-reduced-motion: reduce)",
+          "matches": true,
+          "listeners": [
+            "()=>{Mt=ce.matches,_.sim.fill(0),_.ripples=[],_.reveal=1,ae()}"
+          ]
+        },
+        {
+          "id": 10,
+          "query": "(prefers-reduced-motion: reduce)",
+          "matches": true,
+          "listeners": [
+            "()=>{Mt=ce.matches,_.sim.fill(0),_.ripples=[],_.reveal=1,ae()}"
+          ]
+        },
+        {
+          "id": 11,
+          "query": "(prefers-reduced-motion: reduce)",
+          "matches": true,
+          "listeners": [
+            "()=>{Mt=ce.matches,_.sim.fill(0),_.ripples=[],_.reveal=1,ae()}"
+          ]
+        },
+        {
+          "id": 12,
+          "query": "(prefers-reduced-motion: reduce)",
+          "matches": true,
+          "listeners": [
+            "()=>{oe(),S()}"
+          ]
+        }
+      ],
+      "stage": "perspective(1400px) translateY(26px) rotateX(-0.0275917deg) rotateY(0.0559543deg) scale(1.07)"
+    },
+    "manual": ""
+  },
+  {
+    "port": 5173,
+    "state": {
+      "trace": [
+        {
+          "id": 19,
+          "matches": true,
+          "at": 1314,
+          "fn": "() => {\n      reduce = motionQuery.matches;\n      onVisibility();\n    }"
+        },
+        {
+          "id": 20,
+          "matches": true,
+          "at": 1314.0999999996275,
+          "fn": "() => setReducedMotion(query.matches)"
+        },
+        {
+          "id": 22,
+          "matches": true,
+          "at": 1317.0999999996275,
+          "fn": "() => setReducedMotion(query.matches)"
+        },
+        {
+          "id": 24,
+          "matches": true,
+          "at": 1319.3999999994412,
+          "fn": "() => {\n      reduce = motionQuery.matches;\n      state.sim.fill(0);\n      state.ripples = [];\n     "
+        },
+        {
+          "id": 25,
+          "matches": true,
+          "at": 1319.5,
+          "fn": "() => {\n      reduce = motionQuery.matches;\n      state.sim.fill(0);\n      state.ripples = [];\n     "
+        },
+        {
+          "id": 26,
+          "matches": true,
+          "at": 1319.5,
+          "fn": "() => {\n      reduce = motionQuery.matches;\n      state.sim.fill(0);\n      state.ripples = [];\n     "
+        }
+      ],
+      "queries": [
+        {
+          "id": 0,
+          "query": "(prefers-reduced-motion: reduce)",
+          "matches": true,
+          "listeners": []
+        },
+        {
+          "id": 1,
+          "query": "(prefers-reduced-motion: reduce)",
+          "matches": true,
+          "listeners": []
+        },
+        {
+          "id": 2,
+          "query": "(prefers-reduced-motion: reduce)",
+          "matches": true,
+          "listeners": [
+            "() => {\n      if (motion.matches) finish();\n    }"
+          ]
+        },
+        {
+          "id": 3,
+          "query": "(prefers-reduced-motion: reduce)",
+          "matches": true,
+          "listeners": [
+            "() => {\n      if (motion.matches) finish();\n    }"
+          ]
+        },
+        {
+          "id": 4,
+          "query": "(prefers-reduced-motion: reduce)",
+          "matches": true,
+          "listeners": []
+        },
+        {
+          "id": 5,
+          "query": "(prefers-reduced-motion: reduce)",
+          "matches": true,
+          "listeners": []
+        },
+        {
+          "id": 6,
+          "query": "(prefers-reduced-motion: reduce)",
+          "matches": true,
+          "listeners": []
+        },
+        {
+          "id": 7,
+          "query": "(prefers-reduced-motion: reduce)",
+          "matches": true,
+          "listeners": []
+        },
+        {
+          "id": 8,
+          "query": "(prefers-reduced-motion: reduce)",
+          "matches": true,
+          "listeners": [
+            "() => {\n      reduce = motionQuery.matches;\n      onVisibility();\n    }"
+          ]
+        },
+        {
+          "id": 9,
+          "query": "(prefers-reduced-motion: reduce)",
+          "matches": true,
+          "listeners": [
+            "() => setReducedMotion(query.matches)"
+          ]
+        },
+        {
+          "id": 11,
+          "query": "(prefers-reduced-motion: reduce)",
+          "matches": true,
+          "listeners": [
+            "() => setReducedMotion(query.matches)"
+          ]
+        },
+        {
+          "id": 13,
+          "query": "(prefers-reduced-motion: reduce)",
+          "matches": true,
+          "listeners": [
+            "() => {\n      reduce = motionQuery.matches;\n      state.sim.fill(0);\n      state.ripples = [];\n      state.reveal = 1;\n      onVisibility();\n    }"
+          ]
+        },
+        {
+          "id": 14,
+          "query": "(prefers-reduced-motion: reduce)",
+          "matches": true,
+          "listeners": [
+            "() => {\n      reduce = motionQuery.matches;\n      state.sim.fill(0);\n      state.ripples = [];\n      state.reveal = 1;\n      onVisibility();\n    }"
+          ]
+        },
+        {
+          "id": 15,
+          "query": "(prefers-reduced-motion: reduce)",
+          "matches": true,
+          "listeners": [
+            "() => {\n      reduce = motionQuery.matches;\n      state.sim.fill(0);\n      state.ripples = [];\n      state.reveal = 1;\n      onVisibility();\n    }"
+          ]
+        },
+        {
+          "id": 16,
+          "query": "(prefers-reduced-motion: reduce)",
+          "matches": true,
+          "listeners": [
+            "() => {\n      reset();\n      wake();\n    }"
+          ]
+        },
+        {
+          "id": 19,
+          "query": "(prefers-reduced-motion: reduce)",
+          "matches": true,
+          "listeners": [
+            "() => {\n      reduce = motionQuery.matches;\n      onVisibility();\n    }"
+          ]
+        },
+        {
+          "id": 20,
+          "query": "(prefers-reduced-motion: reduce)",
+          "matches": true,
+          "listeners": [
+            "() => setReducedMotion(query.matches)"
+          ]
+        },
+        {
+          "id": 22,
+          "query": "(prefers-reduced-motion: reduce)",
+          "matches": true,
+          "listeners": [
+            "() => setReducedMotion(query.matches)"
+          ]
+        },
+        {
+          "id": 24,
+          "query": "(prefers-reduced-motion: reduce)",
+          "matches": true,
+          "listeners": [
+            "() => {\n      reduce = motionQuery.matches;\n      state.sim.fill(0);\n      state.ripples = [];\n      state.reveal = 1;\n      onVisibility();\n    }"
+          ]
+        },
+        {
+          "id": 25,
+          "query": "(prefers-reduced-motion: reduce)",
+          "matches": true,
+          "listeners": [
+            "() => {\n      reduce = motionQuery.matches;\n      state.sim.fill(0);\n      state.ripples = [];\n      state.reveal = 1;\n      onVisibility();\n    }"
+          ]
+        },
+        {
+          "id": 26,
+          "query": "(prefers-reduced-motion: reduce)",
+          "matches": true,
+          "listeners": [
+            "() => {\n      reduce = motionQuery.matches;\n      state.sim.fill(0);\n      state.ripples = [];\n      state.reveal = 1;\n      onVisibility();\n    }"
+          ]
+        },
+        {
+          "id": 27,
+          "query": "(prefers-reduced-motion: reduce)",
+          "matches": true,
+          "listeners": [
+            "() => {\n      reset();\n      wake();\n    }"
+          ]
+        }
+      ],
+      "stage": "perspective(1400px) translateY(26px) rotateX(-0.022083deg) rotateY(0.0447766deg) scale(1.07)"
+    },
+    "manual": ""
+  }
+]

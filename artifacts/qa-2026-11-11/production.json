@@ -1,0 +1,1036 @@
+{
+  "checks": [
+    {
+      "pass": true,
+      "label": "Production intro locks the main content"
+    },
+    {
+      "pass": true,
+      "label": "Keyboard cannot enter the hero during intro"
+    },
+    {
+      "pass": true,
+      "label": "Natural intro completion unlocks production hero"
+    },
+    {
+      "pass": true,
+      "label": "Production text and all three artwork shaders initialize"
+    },
+    {
+      "pass": true,
+      "label": "All four controls have correct keyboard order and visible focus",
+      "data": [
+        {
+          "text": "Work",
+          "outline": "solid"
+        },
+        {
+          "text": "Services",
+          "outline": "solid"
+        },
+        {
+          "text": "Contact",
+          "outline": "solid"
+        },
+        {
+          "text": "Start a project",
+          "outline": "solid"
+        }
+      ]
+    },
+    {
+      "pass": true,
+      "label": "Mouse clicks reach all preview controls while the camera moves"
+    },
+    {
+      "pass": true,
+      "label": "Preview controls keep the visitor on the hero"
+    },
+    {
+      "pass": false,
+      "label": "Live reduced motion resets production camera"
+    },
+    {
+      "pass": true,
+      "label": "Production animations recover when reduced motion is disabled"
+    },
+    {
+      "pass": true,
+      "label": "Escape skips production intro"
+    },
+    {
+      "pass": true,
+      "label": "Production layout 320×480",
+      "data": []
+    },
+    {
+      "pass": true,
+      "label": "Production layout 320×568",
+      "data": []
+    },
+    {
+      "pass": true,
+      "label": "Production layout 360×640",
+      "data": []
+    },
+    {
+      "pass": true,
+      "label": "Production layout 390×844",
+      "data": []
+    },
+    {
+      "pass": true,
+      "label": "Production layout 600×800",
+      "data": []
+    },
+    {
+      "pass": true,
+      "label": "Production layout 601×320",
+      "data": []
+    },
+    {
+      "pass": true,
+      "label": "Production layout 768×1024",
+      "data": []
+    },
+    {
+      "pass": true,
+      "label": "Production layout 844×390",
+      "data": []
+    },
+    {
+      "pass": true,
+      "label": "Production layout 900×600",
+      "data": []
+    },
+    {
+      "pass": true,
+      "label": "Production layout 1024×768",
+      "data": []
+    },
+    {
+      "pass": true,
+      "label": "Production layout 1280×720",
+      "data": []
+    },
+    {
+      "pass": true,
+      "label": "Production layout 1440×900",
+      "data": []
+    },
+    {
+      "pass": true,
+      "label": "Production layout 1920×1080",
+      "data": []
+    },
+    {
+      "pass": true,
+      "label": "Production layout 2560×1080",
+      "data": []
+    },
+    {
+      "pass": true,
+      "label": "Live reduced motion also skips intro on touch devices"
+    },
+    {
+      "pass": true,
+      "label": "Touch project control remains usable"
+    },
+    {
+      "pass": true,
+      "label": "Full production hero retains all original artworks without WebGL"
+    },
+    {
+      "pass": true,
+      "label": "No uncaught production JavaScript errors",
+      "data": []
+    },
+    {
+      "pass": false,
+      "label": "No production console errors",
+      "data": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "pass": true,
+      "label": "No failed production asset requests",
+      "data": []
+    }
+  ],
+  "layouts": [
+    {
+      "width": 320,
+      "height": 480,
+      "scrollWidth": 320,
+      "scrollHeight": 480,
+      "intro": false,
+      "boxes": {
+        "nav": {
+          "x": 52.609375,
+          "y": 16,
+          "width": 214.78125,
+          "height": 48,
+          "right": 267.390625,
+          "bottom": 64
+        },
+        "logo": {
+          "x": 12,
+          "y": 25.28125,
+          "width": 32,
+          "height": 29.421875,
+          "right": 44,
+          "bottom": 54.703125
+        },
+        "heading": {
+          "x": 50.65625,
+          "y": 96,
+          "width": 218.671875,
+          "height": 68.40625,
+          "right": 269.328125,
+          "bottom": 164.40625
+        },
+        "copy": {
+          "x": 20,
+          "y": 180.40625,
+          "width": 280,
+          "height": 65.25,
+          "right": 300,
+          "bottom": 245.65625
+        },
+        "cta": {
+          "x": 60.125,
+          "y": 261.65625,
+          "width": 199.75,
+          "height": 48,
+          "right": 259.875,
+          "bottom": 309.65625
+        },
+        "artwork": {
+          "x": 0,
+          "y": 325.65625,
+          "width": 320,
+          "height": 154.34375,
+          "right": 320,
+          "bottom": 480
+        }
+      },
+      "headingName": "Your vision. Made real.",
+      "fonts": [
+        true,
+        true
+      ]
+    },
+    {
+      "width": 320,
+      "height": 568,
+      "scrollWidth": 320,
+      "scrollHeight": 568,
+      "intro": false,
+      "boxes": {
+        "nav": {
+          "x": 52.609375,
+          "y": 16,
+          "width": 214.78125,
+          "height": 48,
+          "right": 267.390625,
+          "bottom": 64
+        },
+        "logo": {
+          "x": 12,
+          "y": 25.28125,
+          "width": 32,
+          "height": 29.421875,
+          "right": 44,
+          "bottom": 54.703125
+        },
+        "heading": {
+          "x": 50.65625,
+          "y": 96,
+          "width": 218.671875,
+          "height": 68.40625,
+          "right": 269.328125,
+          "bottom": 164.40625
+        },
+        "copy": {
+          "x": 20,
+          "y": 180.40625,
+          "width": 280,
+          "height": 65.25,
+          "right": 300,
+          "bottom": 245.65625
+        },
+        "cta": {
+          "x": 60.125,
+          "y": 261.65625,
+          "width": 199.75,
+          "height": 48,
+          "right": 259.875,
+          "bottom": 309.65625
+        },
+        "artwork": {
+          "x": 0,
+          "y": 325.65625,
+          "width": 320,
+          "height": 242.34375,
+          "right": 320,
+          "bottom": 568
+        }
+      },
+      "headingName": "Your vision. Made real.",
+      "fonts": [
+        true,
+        true
+      ]
+    },
+    {
+      "width": 360,
+      "height": 640,
+      "scrollWidth": 360,
+      "scrollHeight": 640,
+      "intro": false,
+      "boxes": {
+        "nav": {
+          "x": 72.609375,
+          "y": 16,
+          "width": 214.78125,
+          "height": 48,
+          "right": 287.390625,
+          "bottom": 64
+        },
+        "logo": {
+          "x": 12,
+          "y": 25.28125,
+          "width": 32,
+          "height": 29.421875,
+          "right": 44,
+          "bottom": 54.703125
+        },
+        "heading": {
+          "x": 56.96875,
+          "y": 96,
+          "width": 246.0625,
+          "height": 76.96875,
+          "right": 303.03125,
+          "bottom": 172.96875
+        },
+        "copy": {
+          "x": 20,
+          "y": 188.96875,
+          "width": 320,
+          "height": 65.25,
+          "right": 340,
+          "bottom": 254.21875
+        },
+        "cta": {
+          "x": 80.125,
+          "y": 270.21875,
+          "width": 199.75,
+          "height": 48,
+          "right": 279.875,
+          "bottom": 318.21875
+        },
+        "artwork": {
+          "x": 0,
+          "y": 334.21875,
+          "width": 360,
+          "height": 305.78125,
+          "right": 360,
+          "bottom": 640
+        }
+      },
+      "headingName": "Your vision. Made real.",
+      "fonts": [
+        true,
+        true
+      ]
+    },
+    {
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390,
+      "scrollHeight": 844,
+      "intro": false,
+      "boxes": {
+        "nav": {
+          "x": 81.609375,
+          "y": 16,
+          "width": 226.78125,
+          "height": 48,
+          "right": 308.390625,
+          "bottom": 64
+        },
+        "logo": {
+          "x": 24,
+          "y": 25.28125,
+          "width": 32,
+          "height": 29.421875,
+          "right": 56,
+          "bottom": 54.703125
+        },
+        "heading": {
+          "x": 61.765625,
+          "y": 112,
+          "width": 266.46875,
+          "height": 83.40625,
+          "right": 328.234375,
+          "bottom": 195.40625
+        },
+        "copy": {
+          "x": 24,
+          "y": 215.40625,
+          "width": 342,
+          "height": 72,
+          "right": 366,
+          "bottom": 287.40625
+        },
+        "cta": {
+          "x": 95.125,
+          "y": 307.40625,
+          "width": 199.75,
+          "height": 54,
+          "right": 294.875,
+          "bottom": 361.40625
+        },
+        "artwork": {
+          "x": 0,
+          "y": 469.609375,
+          "width": 390,
+          "height": 374.390625,
+          "right": 390,
+          "bottom": 844
+        }
+      },
+      "headingName": "Your vision. Made real.",
+      "fonts": [
+        true,
+        true
+      ]
+    },
+    {
+      "width": 600,
+      "height": 800,
+      "scrollWidth": 600,
+      "scrollHeight": 800,
+      "intro": false,
+      "boxes": {
+        "nav": {
+          "x": 186.609375,
+          "y": 16,
+          "width": 226.78125,
+          "height": 48,
+          "right": 413.390625,
+          "bottom": 64
+        },
+        "logo": {
+          "x": 30,
+          "y": 25.28125,
+          "width": 32,
+          "height": 29.421875,
+          "right": 62,
+          "bottom": 54.703125
+        },
+        "heading": {
+          "x": 95.015625,
+          "y": 112,
+          "width": 409.96875,
+          "height": 128.28125,
+          "right": 504.984375,
+          "bottom": 240.28125
+        },
+        "copy": {
+          "x": 30,
+          "y": 260.28125,
+          "width": 540,
+          "height": 48,
+          "right": 570,
+          "bottom": 308.28125
+        },
+        "cta": {
+          "x": 200.125,
+          "y": 328.28125,
+          "width": 199.75,
+          "height": 54,
+          "right": 399.875,
+          "bottom": 382.28125
+        },
+        "artwork": {
+          "x": 0,
+          "y": 416,
+          "width": 600,
+          "height": 384,
+          "right": 600,
+          "bottom": 800
+        }
+      },
+      "headingName": "Your vision. Made real.",
+      "fonts": [
+        true,
+        true
+      ]
+    },
+    {
+      "width": 601,
+      "height": 320,
+      "scrollWidth": 601,
+      "scrollHeight": 320,
+      "intro": false,
+      "boxes": {
+        "nav": {
+          "x": 156.109375,
+          "y": 20,
+          "width": 288.78125,
+          "height": 56,
+          "right": 444.890625,
+          "bottom": 76
+        },
+        "logo": {
+          "x": 20,
+          "y": 29.609375,
+          "width": 40,
+          "height": 36.78125,
+          "right": 60,
+          "bottom": 66.390625
+        },
+        "heading": {
+          "x": 124.4375,
+          "y": 88,
+          "width": 352.109375,
+          "height": 28.5,
+          "right": 476.546875,
+          "bottom": 116.5
+        },
+        "copy": {
+          "x": 20,
+          "y": 128.5,
+          "width": 561,
+          "height": 39.1875,
+          "right": 581,
+          "bottom": 167.6875
+        },
+        "cta": {
+          "x": 203.125,
+          "y": 179.6875,
+          "width": 194.75,
+          "height": 48,
+          "right": 397.875,
+          "bottom": 227.6875
+        },
+        "artwork": {
+          "x": 60.5,
+          "y": 239.6875,
+          "width": 480,
+          "height": 80.3125,
+          "right": 540.5,
+          "bottom": 320
+        }
+      },
+      "headingName": "Your vision. Made real.",
+      "fonts": [
+        true,
+        true
+      ]
+    },
+    {
+      "width": 768,
+      "height": 1024,
+      "scrollWidth": 768,
+      "scrollHeight": 1024,
+      "intro": false,
+      "boxes": {
+        "nav": {
+          "x": 239.609375,
+          "y": 20,
+          "width": 288.78125,
+          "height": 56,
+          "right": 528.390625,
+          "bottom": 76
+        },
+        "logo": {
+          "x": 38.390625,
+          "y": 29.609375,
+          "width": 40,
+          "height": 36.78125,
+          "right": 78.390625,
+          "bottom": 66.390625
+        },
+        "heading": {
+          "x": 143.59375,
+          "y": 112,
+          "width": 480.796875,
+          "height": 150.46875,
+          "right": 624.390625,
+          "bottom": 262.46875
+        },
+        "copy": {
+          "x": 107.09375,
+          "y": 282.46875,
+          "width": 553.8125,
+          "height": 48,
+          "right": 660.90625,
+          "bottom": 330.46875
+        },
+        "cta": {
+          "x": 284.125,
+          "y": 350.46875,
+          "width": 199.75,
+          "height": 54,
+          "right": 483.875,
+          "bottom": 404.46875
+        },
+        "artwork": {
+          "x": 0,
+          "y": 532.484375,
+          "width": 768.015625,
+          "height": 491.515625,
+          "right": 768.015625,
+          "bottom": 1024
+        }
+      },
+      "headingName": "Your vision. Made real.",
+      "fonts": [
+        true,
+        true
+      ]
+    },
+    {
+      "width": 844,
+      "height": 390,
+      "scrollWidth": 844,
+      "scrollHeight": 390,
+      "intro": false,
+      "boxes": {
+        "nav": {
+          "x": 277.609375,
+          "y": 20,
+          "width": 288.78125,
+          "height": 56,
+          "right": 566.390625,
+          "bottom": 76
+        },
+        "logo": {
+          "x": 20,
+          "y": 29.609375,
+          "width": 40,
+          "height": 36.78125,
+          "right": 60,
+          "bottom": 66.390625
+        },
+        "heading": {
+          "x": 207.53125,
+          "y": 88,
+          "width": 428.9375,
+          "height": 34.734375,
+          "right": 636.46875,
+          "bottom": 122.734375
+        },
+        "copy": {
+          "x": 134.828125,
+          "y": 134.734375,
+          "width": 574.328125,
+          "height": 39.1875,
+          "right": 709.15625,
+          "bottom": 173.921875
+        },
+        "cta": {
+          "x": 324.625,
+          "y": 185.921875,
+          "width": 194.75,
+          "height": 48,
+          "right": 519.375,
+          "bottom": 233.921875
+        },
+        "artwork": {
+          "x": 129.5,
+          "y": 245.921875,
+          "width": 585,
+          "height": 144.078125,
+          "right": 714.5,
+          "bottom": 390
+        }
+      },
+      "headingName": "Your vision. Made real.",
+      "fonts": [
+        true,
+        true
+      ]
+    },
+    {
+      "width": 900,
+      "height": 600,
+      "scrollWidth": 900,
+      "scrollHeight": 600,
+      "intro": false,
+      "boxes": {
+        "nav": {
+          "x": 305.609375,
+          "y": 20,
+          "width": 288.78125,
+          "height": 56,
+          "right": 594.390625,
+          "bottom": 76
+        },
+        "logo": {
+          "x": 20,
+          "y": 29.609375,
+          "width": 40,
+          "height": 36.78125,
+          "right": 60,
+          "bottom": 66.390625
+        },
+        "heading": {
+          "x": 156.546875,
+          "y": 88,
+          "width": 586.90625,
+          "height": 47.515625,
+          "right": 743.453125,
+          "bottom": 135.515625
+        },
+        "copy": {
+          "x": 162.828125,
+          "y": 147.515625,
+          "width": 574.328125,
+          "height": 39.1875,
+          "right": 737.15625,
+          "bottom": 186.703125
+        },
+        "cta": {
+          "x": 352.625,
+          "y": 198.703125,
+          "width": 194.75,
+          "height": 48,
+          "right": 547.375,
+          "bottom": 246.703125
+        },
+        "artwork": {
+          "x": 0,
+          "y": 312,
+          "width": 900,
+          "height": 288,
+          "right": 900,
+          "bottom": 600
+        }
+      },
+      "headingName": "Your vision. Made real.",
+      "fonts": [
+        true,
+        true
+      ]
+    },
+    {
+      "width": 1024,
+      "height": 768,
+      "scrollWidth": 1024,
+      "scrollHeight": 768,
+      "intro": false,
+      "boxes": {
+        "nav": {
+          "x": 367.609375,
+          "y": 22.515625,
+          "width": 288.78125,
+          "height": 56,
+          "right": 656.390625,
+          "bottom": 78.515625
+        },
+        "logo": {
+          "x": 51.1875,
+          "y": 28.4375,
+          "width": 48,
+          "height": 44.140625,
+          "right": 99.1875,
+          "bottom": 72.578125
+        },
+        "heading": {
+          "x": 269.03125,
+          "y": 112,
+          "width": 485.9375,
+          "height": 152.03125,
+          "right": 754.96875,
+          "bottom": 264.03125
+        },
+        "copy": {
+          "x": 235.09375,
+          "y": 284.03125,
+          "width": 553.8125,
+          "height": 48,
+          "right": 788.90625,
+          "bottom": 332.03125
+        },
+        "cta": {
+          "x": 412.125,
+          "y": 352.03125,
+          "width": 199.75,
+          "height": 54,
+          "right": 611.875,
+          "bottom": 406.03125
+        },
+        "artwork": {
+          "x": 51.1875,
+          "y": 430.03125,
+          "width": 921.625,
+          "height": 337.96875,
+          "right": 972.8125,
+          "bottom": 768
+        }
+      },
+      "headingName": "Your vision. Made real.",
+      "fonts": [
+        true,
+        true
+      ]
+    },
+    {
+      "width": 1280,
+      "height": 720,
+      "scrollWidth": 1280,
+      "scrollHeight": 720,
+      "intro": false,
+      "boxes": {
+        "nav": {
+          "x": 495.609375,
+          "y": 28.15625,
+          "width": 288.78125,
+          "height": 56,
+          "right": 784.390625,
+          "bottom": 84.15625
+        },
+        "logo": {
+          "x": 64,
+          "y": 34.078125,
+          "width": 48,
+          "height": 44.140625,
+          "right": 112,
+          "bottom": 78.21875
+        },
+        "heading": {
+          "x": 412.234375,
+          "y": 112,
+          "width": 455.515625,
+          "height": 142.53125,
+          "right": 867.75,
+          "bottom": 254.53125
+        },
+        "copy": {
+          "x": 363.09375,
+          "y": 274.53125,
+          "width": 553.8125,
+          "height": 48,
+          "right": 916.90625,
+          "bottom": 322.53125
+        },
+        "cta": {
+          "x": 540.125,
+          "y": 342.53125,
+          "width": 199.75,
+          "height": 54,
+          "right": 739.875,
+          "bottom": 396.53125
+        },
+        "artwork": {
+          "x": 80,
+          "y": 420.53125,
+          "width": 1120,
+          "height": 299.46875,
+          "right": 1200,
+          "bottom": 720
+        }
+      },
+      "headingName": "Your vision. Made real.",
+      "fonts": [
+        true,
+        true
+      ]
+    },
+    {
+      "width": 1440,
+      "height": 900,
+      "scrollWidth": 1440,
+      "scrollHeight": 900,
+      "intro": false,
+      "boxes": {
+        "nav": {
+          "x": 575.609375,
+          "y": 31.671875,
+          "width": 288.78125,
+          "height": 56,
+          "right": 864.390625,
+          "bottom": 87.671875
+        },
+        "logo": {
+          "x": 72,
+          "y": 37.59375,
+          "width": 48,
+          "height": 44.140625,
+          "right": 120,
+          "bottom": 81.734375
+        },
+        "heading": {
+          "x": 435.296875,
+          "y": 117,
+          "width": 569.40625,
+          "height": 178.1875,
+          "right": 1004.703125,
+          "bottom": 295.1875
+        },
+        "copy": {
+          "x": 408.46875,
+          "y": 315.1875,
+          "width": 623.046875,
+          "height": 54,
+          "right": 1031.515625,
+          "bottom": 369.1875
+        },
+        "cta": {
+          "x": 620.125,
+          "y": 389.1875,
+          "width": 199.75,
+          "height": 54,
+          "right": 819.875,
+          "bottom": 443.1875
+        },
+        "artwork": {
+          "x": 160,
+          "y": 470.1875,
+          "width": 1120,
+          "height": 429.8125,
+          "right": 1280,
+          "bottom": 900
+        }
+      },
+      "headingName": "Your vision. Made real.",
+      "fonts": [
+        true,
+        true
+      ]
+    },
+    {
+      "width": 1920,
+      "height": 1080,
+      "scrollWidth": 1920,
+      "scrollHeight": 1080,
+      "intro": false,
+      "boxes": {
+        "nav": {
+          "x": 815.609375,
+          "y": 32,
+          "width": 288.78125,
+          "height": 56,
+          "right": 1104.390625,
+          "bottom": 88
+        },
+        "logo": {
+          "x": 160,
+          "y": 37.921875,
+          "width": 48,
+          "height": 44.140625,
+          "right": 208,
+          "bottom": 82.0625
+        },
+        "heading": {
+          "x": 656.28125,
+          "y": 140.390625,
+          "width": 607.4375,
+          "height": 190.0625,
+          "right": 1263.71875,
+          "bottom": 330.453125
+        },
+        "copy": {
+          "x": 613.859375,
+          "y": 350.453125,
+          "width": 692.265625,
+          "height": 60,
+          "right": 1306.125,
+          "bottom": 410.453125
+        },
+        "cta": {
+          "x": 860.125,
+          "y": 430.453125,
+          "width": 199.75,
+          "height": 54,
+          "right": 1059.875,
+          "bottom": 484.453125
+        },
+        "artwork": {
+          "x": 400,
+          "y": 561.609375,
+          "width": 1120,
+          "height": 518.390625,
+          "right": 1520,
+          "bottom": 1080
+        }
+      },
+      "headingName": "Your vision. Made real.",
+      "fonts": [
+        true,
+        true
+      ]
+    },
+    {
+      "width": 2560,
+      "height": 1080,
+      "scrollWidth": 2560,
+      "scrollHeight": 1080,
+      "intro": false,
+      "boxes": {
+        "nav": {
+          "x": 1135.609375,
+          "y": 32,
+          "width": 288.78125,
+          "height": 56,
+          "right": 1424.390625,
+          "bottom": 88
+        },
+        "logo": {
+          "x": 480,
+          "y": 37.921875,
+          "width": 48,
+          "height": 44.140625,
+          "right": 528,
+          "bottom": 82.0625
+        },
+        "heading": {
+          "x": 976.28125,
+          "y": 140.390625,
+          "width": 607.4375,
+          "height": 190.0625,
+          "right": 1583.71875,
+          "bottom": 330.453125
+        },
+        "copy": {
+          "x": 933.859375,
+          "y": 350.453125,
+          "width": 692.265625,
+          "height": 60,
+          "right": 1626.125,
+          "bottom": 410.453125
+        },
+        "cta": {
+          "x": 1180.125,
+          "y": 430.453125,
+          "width": 199.75,
+          "height": 54,
+          "right": 1379.875,
+          "bottom": 484.453125
+        },
+        "artwork": {
+          "x": 720,
+          "y": 561.609375,
+          "width": 1120,
+          "height": 518.390625,
+          "right": 1840,
+          "bottom": 1080
+        }
+      },
+      "headingName": "Your vision. Made real.",
+      "fonts": [
+        true,
+        true
+      ]
+    }
+  ],
+  "errors": [],
+  "failedRequests": [],
+  "consoleErrors": [
+    "Failed to load resource: the server responded with a status of 404 (Not Found)"
+  ]
+}

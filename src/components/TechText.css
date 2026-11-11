@@ -1,0 +1,74 @@
+.tech-text {
+  position: relative;
+  display: block;
+  inline-size: 100%;
+  block-size: 100%;
+  touch-action: pan-y;
+  user-select: none;
+}
+
+.tech-text-canvas {
+  position: absolute;
+  inset: 0;
+  display: block;
+  inline-size: 100%;
+  block-size: 100%;
+  /* Keep small canvas labels independent of the headline's tight tracking. */
+  letter-spacing: normal;
+  pointer-events: none;
+  visibility: hidden;
+}
+
+.tech-text-fallback {
+  display: inline-block;
+  white-space: pre;
+}
+
+.tech-text[data-ready='true'] > .tech-text-fallback {
+  visibility: hidden;
+}
+
+.tech-text[data-ready='true'] > .tech-text-canvas {
+  visibility: visible;
+}
+
+.tech-text--inline {
+  display: inline-block;
+  inline-size: auto;
+  block-size: auto;
+  vertical-align: top;
+}
+
+.tech-text--inline > .tech-text-canvas {
+  z-index: 1;
+  /* Initial bounds; the renderer aligns this surface with the viewport. */
+  inset: -64px -32px;
+  inline-size: calc(100% + 64px);
+  block-size: calc(100% + 128px);
+}
+
+.tech-text-baseline {
+  display: inline-block;
+  inline-size: 0;
+  block-size: 0;
+  vertical-align: baseline;
+}
+
+.tech-text-echo-o {
+  display: inline-block;
+  inline-size: 0.758em;
+  block-size: 0.758em;
+  margin-inline: -0.012em;
+  overflow: visible;
+  vertical-align: -0.015em;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tech-text[data-ready='true'] > .tech-text-fallback {
+    visibility: visible;
+  }
+
+  .tech-text[data-ready='true'] > .tech-text-canvas {
+    visibility: hidden;
+  }
+}

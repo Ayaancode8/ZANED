@@ -1,0 +1,157 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-11-11T08:01:21.272972+00:00",
+  "title": "Design System: ZANED",
+  "extensions": {
+    "breakpoints": [
+      {
+        "name": "mobile",
+        "value": "600px"
+      },
+      {
+        "name": "compact-mobile-height",
+        "value": "700px"
+      }
+    ],
+    "shadows": [
+      {
+        "name": "glass-navigation",
+        "value": "0 8px 28px rgb(32 38 41 / 8%), 0 2px 6px rgb(32 38 41 / 3%), inset 0 1px 0 rgb(255 255 255 / 70%), inset 0 -1px 0 rgb(32 38 41 / 7%)",
+        "purpose": "Shared capsule depth and bright rim."
+      },
+      {
+        "name": "glass-project",
+        "value": "0 8px 20px rgb(32 38 41 / 16%), 0 2px 5px rgb(32 38 41 / 8%), inset 0 1px 0 rgb(255 255 255 / 24%), inset 0 -1px 0 rgb(0 0 0 / 18%)",
+        "purpose": "Dark project capsule depth."
+      }
+    ],
+    "motion": [
+      {
+        "name": "control-ease",
+        "value": "cubic-bezier(0.22, 1, 0.36, 1)",
+        "purpose": "Navigation 180ms and project 200ms transform transitions; fine-pointer hover only."
+      },
+      {
+        "name": "control-press",
+        "value": "70ms",
+        "purpose": "Navigation scale 0.97; project scale 0.975. Reduced motion removes transitions and transforms."
+      },
+      {
+        "name": "intro-sequence",
+        "value": "7038ms",
+        "purpose": "Silent wordmark-to-eleven-media-tiles-to-shaded-crown sequence on every fresh page load. Shared Web Animations document-timeline origin; hidden tabs pause and resume."
+      },
+      {
+        "name": "intro-fade",
+        "value": "200ms ease-out",
+        "purpose": "Fade into the prepared hero after the sequence; Escape or reduced motion completes immediately."
+      },
+      {
+        "name": "intro-settle",
+        "value": "cubic-bezier(0.22, 1, 0.36, 1)",
+        "purpose": "Intro media collapse and crown-half assembly."
+      },
+      {
+        "name": "intro-tagline-flip",
+        "value": "1100ms per character; 34.74ms stagger",
+        "purpose": "React Bits bottom-origin -90\u00b0 flip in charcoal; 4800\u20136838ms on the shared intro clock, settled 200ms before the melt."
+      }
+    ],
+    "typographyMeta": {
+      "intro-wordmark": {
+        "displayName": "Intro wordmark",
+        "purpose": "Plain ZANED in self-hosted Anton, 96px type with a 99px line box; identical static and animated glyph metrics."
+      },
+      "intro-tagline": {
+        "displayName": "Intro tagline",
+        "purpose": "32px Belleza, 40px line height, 0.005em tracking, charcoal #202629 throughout the flip and melt."
+      },
+      "intro-suffix": {
+        "displayName": "Intro inc suffix",
+        "purpose": "26px Space Grotesk 400, body color, 0.025em tracking. Separate from the plain Anton wordmark, beside D at its upper-right edge."
+      },
+      "display": {
+        "displayName": "Editorial headline",
+        "purpose": "Self-hosted Anton 400 is intrinsically heavy and compressed. Natural uppercase glyphs, 1.04 leading, -0.015em tracking. Open substitute for Arizona Flare Compressed Bold."
+      },
+      "body": {
+        "displayName": "Hero description",
+        "purpose": "Self-hosted Belleza 400, thin strokes and flared terminals, 1.45 leading, 0.005em tracking, 62ch measure capped at 44rem. Open substitute for Arizona Flare Regular/Light. Controls use Belleza 400 at 16px for navigation and 17px for the project label, with 1.35 leading and 0.005em tracking."
+      }
+    }
+  },
+  "components": [
+    {
+      "name": "Project control",
+      "kind": "button",
+      "refersTo": "project-cta",
+      "description": "Enabled charcoal liquid-glass capsule; unassigned clicks open nothing, projectHref renders a native link. Preview shows the production frosted fallback with hover, focus, press, reduced motion, and solid fallback.",
+      "html": "<button class=\"ds-glass ds-project-cta\" type=\"button\"><span>Start a project</span><span class=\"ds-arrow-disc\" aria-hidden=\"true\"><svg class=\"ds-arrow\" viewBox=\"0 0 24 24\" focusable=\"false\"><path d=\"M5 19 19 5M5 5h14v14\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.7\" stroke-linecap=\"square\"/></svg></span></button>",
+      "css": ".ds-glass{position:relative;isolation:isolate;border:1px solid rgb(255 255 255 / 72%);border-radius:999px;background:rgb(241 242 242 / 48%);box-shadow:0 8px 28px rgb(32 38 41 / 8%),0 2px 6px rgb(32 38 41 / 3%),inset 0 1px 0 rgb(255 255 255 / 70%),inset 0 -1px 0 rgb(32 38 41 / 7%);-webkit-backdrop-filter:blur(12px) saturate(1.05);backdrop-filter:blur(12px) saturate(1.05)}.ds-glass::before{content:'';position:absolute;z-index:-1;inset:0;border-radius:inherit;background:linear-gradient(150deg,rgb(255 255 255 / 28%),transparent 45%,rgb(255 255 255 / 5%));pointer-events:none}.ds-project-cta{display:inline-flex;align-items:center;justify-content:center;gap:28px;min-height:54px;padding:7px 8px 7px 23px;border-color:rgb(255 255 255 / 30%);background:linear-gradient(155deg,rgb(58 66 72 / 95%),rgb(25 31 35 / 98%));box-shadow:0 8px 20px rgb(32 38 41 / 16%),0 2px 5px rgb(32 38 41 / 8%),inset 0 1px 0 rgb(255 255 255 / 24%),inset 0 -1px 0 rgb(0 0 0 / 18%);color:var(--color-paper,#f1f2f2);font:400 17px/1.35 var(--font-description,'Belleza',Optima,Candara,sans-serif);letter-spacing:.005em;text-decoration:none;cursor:pointer;touch-action:manipulation;transition:box-shadow 200ms ease,transform 200ms cubic-bezier(.22,1,.36,1)}.ds-project-cta::before{opacity:.55;transition:opacity 200ms ease}.ds-arrow-disc{display:grid;place-items:center;flex:none;width:36px;height:36px;border:1px solid rgb(255 255 255 / 18%);border-radius:50%;background:rgb(255 255 255 / 10%);box-shadow:inset 0 1px 0 rgb(255 255 255 / 12%);transition:background-color 200ms ease}.ds-arrow{width:15px;height:15px;transition:transform 200ms cubic-bezier(.22,1,.36,1)}@media(hover:hover) and (pointer:fine){.ds-project-cta:hover::before{opacity:1}.ds-project-cta:hover .ds-arrow-disc{background:rgb(255 255 255 / 19%)}.ds-project-cta:hover .ds-arrow{transform:translate(2px,-2px)}}.ds-project-cta:active{transform:scale(.975);box-shadow:0 3px 8px rgb(32 38 41 / 12%),inset 0 2px 4px rgb(0 0 0 / 20%);transition-duration:70ms}.ds-project-cta:focus-visible{outline:2px solid var(--color-ink,#202629);outline-offset:5px}@media(max-width:900px) and (max-height:700px){.ds-project-cta{min-height:48px;padding-block:5px}}@media(min-width:601px) and (max-height:600px){.ds-project-cta{min-height:48px;padding:5px 6px 5px 20px}}@supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){.ds-project-cta{background:#202629}}@media(prefers-reduced-motion:reduce){.ds-project-cta,.ds-project-cta::before,.ds-arrow,.ds-arrow-disc{transition:none}.ds-project-cta:active,.ds-project-cta:hover .ds-arrow{transform:none}}"
+    },
+    {
+      "name": "Navigation",
+      "kind": "nav",
+      "refersTo": "navigation",
+      "description": "Centered liquid-glass capsule retaining three enabled labels and 44px controls. Configured href values use native links. Preview shows the production frosted fallback with hover, focus, press, reduced motion, and solid fallback.",
+      "html": "<nav class=\"ds-glass ds-navigation\" aria-label=\"Main navigation\"><button class=\"ds-navigation-control\" type=\"button\">Work</button><button class=\"ds-navigation-control\" type=\"button\">Services</button><button class=\"ds-navigation-control\" type=\"button\">Contact</button></nav>",
+      "css": ".ds-glass{position:relative;isolation:isolate;border:1px solid rgb(255 255 255 / 72%);border-radius:999px;background:rgb(241 242 242 / 48%);box-shadow:0 8px 28px rgb(32 38 41 / 8%),0 2px 6px rgb(32 38 41 / 3%),inset 0 1px 0 rgb(255 255 255 / 70%),inset 0 -1px 0 rgb(32 38 41 / 7%);-webkit-backdrop-filter:blur(12px) saturate(1.05);backdrop-filter:blur(12px) saturate(1.05)}.ds-glass::before{content:'';position:absolute;z-index:-1;inset:0;border-radius:inherit;background:linear-gradient(150deg,rgb(255 255 255 / 28%),transparent 45%,rgb(255 255 255 / 5%));pointer-events:none}.ds-navigation{display:inline-flex;align-items:center;gap:4px;padding:5px 7px;color:var(--color-ink,#202629)}.ds-navigation-control{display:inline-flex;align-items:center;justify-content:center;min-height:44px;min-width:76px;padding:0 20px;border:0;border-radius:999px;background:transparent;color:inherit;font:400 16px/1.35 var(--font-description,'Belleza',Optima,Candara,sans-serif);letter-spacing:.005em;text-decoration:none;cursor:pointer;touch-action:manipulation;transition:background-color 180ms ease,box-shadow 180ms ease,transform 180ms cubic-bezier(.22,1,.36,1)}@media(hover:hover) and (pointer:fine){.ds-navigation-control:hover{background:rgb(255 255 255 / 60%);box-shadow:0 2px 8px rgb(32 38 41 / 5%),inset 0 1px 0 rgb(255 255 255 / 70%)}}.ds-navigation-control:active{background:rgb(32 38 41 / 10%);box-shadow:inset 0 1px 3px rgb(32 38 41 / 8%);transform:scale(.97);transition-duration:70ms}.ds-navigation-control:focus-visible{outline:2px solid var(--color-ink,#202629);outline-offset:1px;background:rgb(255 255 255 / 60%)}@media(max-width:600px){.ds-navigation{padding:1px 4px;gap:2px}.ds-navigation-control{padding-inline:16px}}@supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){.ds-navigation{background:#eceeef}}@media(prefers-reduced-motion:reduce){.ds-navigation-control{transition:none}.ds-navigation-control:active{transform:none}}"
+    },
+    {
+      "name": "Intro wordmark",
+      "kind": "custom",
+      "refersTo": "intro-wordmark",
+      "description": "Plain ZANED in the existing self-hosted Anton display face, retaining the small Space Grotesk inc suffix.",
+      "html": "<div class=\"ds-intro-specimen\"><span class=\"ds-intro-wordmark\">ZANED<span class=\"ds-intro-suffix\">inc</span></span></div>",
+      "css": ".ds-intro-specimen{display:grid;place-items:center;min-height:180px;background:#fdfdfd;color:#000;overflow:hidden}.ds-intro-wordmark{position:relative;display:block;width:max-content;height:99px;font:400 96px/99px var(--font-display,Anton,sans-serif);font-kerning:none}.ds-intro-suffix{position:absolute;left:calc(100% + 12px);top:2px;font:400 26px/1 var(--font-body,\"Space Grotesk\",sans-serif);letter-spacing:.025em;color:var(--color-body,#4b555b);white-space:nowrap}"
+    }
+  ],
+  "narrative": {
+    "northStar": "ZANED reference",
+    "overview": "The supplied identity pairs dense, emphatic typography with open space, a lime-to-mist atmosphere, and original photographic cutouts. Heavy compressed headline type contrasts with thin, flared supporting copy. This record covers the shipped header and hero only; future surfaces have no established component language yet.",
+    "keyCharacteristics": [
+      "Heavy display type and quiet supporting text.",
+      "Dark teal lettering over lime and mist.",
+      "Original imagery, static composition, and minimal controls.",
+      "Silent near-white intro: natural-width black wordmark, mixed-media tiles, and supplied shaded crown."
+    ],
+    "rules": [
+      {
+        "name": "The Type Pair Rule.",
+        "body": "Use Anton for the headline, Belleza for the description and controls, and Space Grotesk for the intro suffix.",
+        "section": "typography"
+      },
+      {
+        "name": "The Viewport Fit Rule.",
+        "body": "Keep this hero within one viewport without scrolling, including short desktop and compact mobile screens.",
+        "section": "layout"
+      },
+      {
+        "name": "The Glass Control Rule.",
+        "body": "Keep the material on the navigation and project capsule, preserving readable labels, visible keyboard focus, and solid fallbacks.",
+        "section": "elevation"
+      },
+      {
+        "name": "The Natural Wordmark Rule.",
+        "body": "The intro uses plain ZANED in self-hosted Anton at 96px with a 99px line box. Static and animated glyphs share natural widths. The small inc suffix uses Space Grotesk beside D at its upper-right edge. The charcoal Belleza tagline settles 200ms before the hero melt.",
+        "section": "typography"
+      },
+      {
+        "name": "The Intro Handoff Rule.",
+        "body": "Keep the underlying hero inactive until the intro completes or is skipped; Escape and reduced motion must always reach the hero.",
+        "section": "components"
+      }
+    ],
+    "dos": [
+      "**Do** preserve the natural text widths and supplied artwork proportions.",
+      "**Do** use the approved self-hosted type pair and retain the accessible heading name.",
+      "**Do** verify this hero at both narrow and short viewport sizes.",
+      "**Do** preserve natural intro letter proportions, uniform stage scaling, silent media, and poster fallbacks."
+    ],
+    "donts": [
+      "**Don't** restore the removed lower profile artwork.",
+      "**Don't** disable unassigned preview controls; keep native buttons enabled with hover, focus, and press feedback, and render native links only when destinations exist.",
+      "**Don't** infer cards, fields, additional pages, or a motion system from this hero."
+    ]
+  }
+}

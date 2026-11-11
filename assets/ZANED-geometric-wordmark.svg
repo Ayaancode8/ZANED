@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="360" height="74" viewBox="0 -1 360 74" role="img" aria-labelledby="title desc">
+  <title id="title">ZANED</title>
+  <desc id="desc">Custom geometric ZANED lettering with solid strokes and open counters.</desc>
+  <g fill="#202629">
+    <path id="letter-Z" d="M0 0H66V14L22 58H66V72H0V58L44 14H0Z"/>
+    <path id="letter-A" transform="translate(70)" fill-rule="evenodd" d="M0 72L26 0H46L72 72H56L51 57H21L16 72ZM26 43H46L36 14Z"/>
+    <path id="letter-N" transform="translate(150)" d="M0 72V0H14L54 47V0H68V72H54L14 25V72Z"/>
+    <path id="letter-E" transform="translate(228)" d="M0 0H56V14H15V29H50V43H15V58H56V72H0Z"/>
+    <path id="letter-D" transform="translate(292)" fill-rule="evenodd" d="M0 0H31C54 0 68 14 68 36S54 72 31 72H0ZM15 14V58H30C45 58 53 50 53 36S45 14 30 14Z"/>
+  </g>
+</svg>

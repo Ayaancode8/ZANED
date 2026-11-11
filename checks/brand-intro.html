@@ -1,0 +1,353 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ZANED intro browser checks</title>
+    <style>
+      body { margin: 0; font: 14px/1.5 system-ui, sans-serif; }
+      #controls { position: fixed; z-index: 200; inset: 12px auto auto 12px; max-width: calc(100vw - 24px); padding: 14px; background: white; border: 1px solid #bbb; }
+      #controls h1 { font-size: 16px; margin: 0 0 8px; }
+      button { margin: 2px; padding: 8px 12px; }
+      #results { max-height: 65vh; overflow: auto; }
+      [data-status="passed"] { color: #185d35; }
+      [data-status="failed"] { color: #9b2424; }
+    </style>
+  </head>
+  <body>
+    <div id="controls">
+      <h1>ZANED intro browser checks</h1>
+      <button id="run">Run checks</button>
+      <button data-frame="0">Opening</button>
+      <button data-frame="1600">Letter replacements</button>
+      <button data-frame="2800">Media row</button>
+      <button data-frame="4400">Collapse</button>
+      <button data-frame="6000">Crown</button>
+      <button data-frame="5700">Tagline flips</button>
+      <button data-frame="6838">Tagline settled</button>
+      <button data-frame="7838">Morph starts</button>
+      <button data-frame="8038">Morph midpoint</button>
+      <button data-frame="8338">Morph clears</button>
+      <button id="handoff">Play handoff</button>
+      <button id="export">Export handoff</button>
+      <select id="morph-frame" aria-label="Morph frame">
+        <option value="7038">0%</option><option value="7238">10%</option><option value="7438">20%</option>
+        <option value="7638">30%</option><option value="7838">40%</option><option value="8038">50%</option>
+        <option value="8238">60%</option><option value="8438">70%</option><option value="8638">80%</option>
+        <option value="8838">90%</option><option value="9037">100%</option>
+      </select>
+      <button id="play">Play full intro</button>
+      <ol id="results"></ol>
+    </div>
+    <div id="fixture"></div>
+    <script type="module">
+      import React from 'react';
+      import { createRoot } from 'react-dom/client';
+      import { flushSync } from 'react-dom';
+      import App from '/src/App.jsx';
+      import BrandIntro, { INTRO_DURATION, INTRO_TRANSITION_DURATION } from '/src/components/BrandIntro.jsx';
+      import '/src/styles/base.css';
+
+      const fixture = document.querySelector('#fixture');
+      const controls = document.querySelector('#controls');
+      const results = document.querySelector('#results');
+      const root = createRoot(fixture);
+      let key = 0;
+      const pause = ms => new Promise(resolve => setTimeout(resolve, ms));
+      async function until(predicate, timeout = 5000) {
+        const deadline = performance.now() + timeout;
+        while (!predicate()) {
+          if (performance.now() > deadline) throw new Error('Timed out waiting for intro state');
+          await pause(16);
+        }
+      }
+      function check(condition, label) {
+        if (!condition) throw new Error(label);
+        const item = document.createElement('li');
+        item.textContent = `PASS: ${label}`;
+        results.append(item);
+      }
+      const intro = () => fixture.querySelector('.brand-intro');
+      const mount = () => flushSync(() => root.render(React.createElement(React.StrictMode, { key: ++key }, React.createElement(App))));
+      const unmount = () => flushSync(() => root.render(null));
+      const tracks = () => intro().getAnimations({ subtree: true });
+      const clock = () => tracks().find(track => track.effect.target === intro());
+      async function frame(time) {
+        controls.hidden = true;
+        mount();
+        await until(() => intro()?.dataset.ready);
+        tracks().forEach(track => { track.pause(); track.currentTime = Math.min(time, 6000, track.effect.getComputedTiming().endTime); });
+        if (time >= 5400) {
+          tracks().find(track => track.effect.getTiming().duration === 5400).finish();
+          await until(() => fixture.querySelector('.zaned-hero'));
+          if (time >= INTRO_DURATION) await until(() => ['ready', 'fallback'].includes(intro()?.dataset.morphState), 7000);
+        }
+        tracks().forEach(track => { track.pause(); track.currentTime = Math.min(time, track.effect.getComputedTiming().endTime); });
+        intro().querySelectorAll('video').forEach(video => { video.pause(); video.currentTime = Math.min(time / 1000, 4); });
+        await Promise.all([...intro().querySelectorAll('img')].filter(image => image.getClientRects().length)
+          .map(image => image.decode().catch(() => {})));
+        await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+      }
+      document.querySelectorAll('[data-frame]').forEach(button => button.addEventListener('click', async () => {
+        delete document.body.dataset.frame;
+        await frame(Number(button.dataset.frame));
+        controls.hidden = true;
+        document.body.dataset.frame = button.dataset.frame;
+      }));
+      document.querySelector('#play').addEventListener('click', () => { mount(); controls.hidden = true; });
+      document.querySelector('#handoff').addEventListener('click', async () => {
+        await frame(INTRO_DURATION);
+        tracks().filter(track => track.effect.getTiming().duration > INTRO_DURATION).forEach(track => track.play());
+      });
+      document.querySelector('#export').addEventListener('click', async () => {
+        await frame(INTRO_DURATION);
+        clock().currentTime = INTRO_DURATION + 1;
+        await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+        const canvas = intro().querySelector('.morph-slider-canvas');
+        const stream = canvas.captureStream(30);
+        const recorder = new MediaRecorder(stream, { mimeType: 'video/webm', videoBitsPerSecond: 5000000 });
+        const chunks = [];
+        recorder.ondataavailable = event => chunks.push(event.data);
+        recorder.onstop = () => {
+          stream.getTracks().forEach(track => track.stop());
+          const url = URL.createObjectURL(new Blob(chunks, { type: 'video/webm' }));
+          const link = document.createElement('a');
+          link.download = 'morph-transition.webm';
+          link.href = url;
+          link.id = 'recorded-handoff';
+          link.textContent = 'Download recorded handoff';
+          controls.append(link);
+          controls.hidden = false;
+        };
+        recorder.start();
+        const start = performance.now();
+        const record = now => {
+          const elapsed = now - start;
+          clock().currentTime = INTRO_DURATION + Math.min(elapsed, INTRO_TRANSITION_DURATION - 1);
+          if (elapsed < INTRO_TRANSITION_DURATION) requestAnimationFrame(record);
+          else setTimeout(() => recorder.stop(), 150);
+        };
+        requestAnimationFrame(record);
+      });
+      document.querySelector('#morph-frame').addEventListener('change', async event => {
+        delete document.body.dataset.frame;
+        await frame(Number(event.target.value));
+        document.body.dataset.frame = event.target.value;
+      });
+      document.addEventListener('keydown', event => {
+        if (event.key === 'c') controls.hidden = !controls.hidden;
+      });
+
+      document.querySelector('#run').addEventListener('click', async event => {
+        const run = event.currentTarget;
+        run.disabled = true;
+        unmount();
+        results.replaceChildren();
+        results.dataset.status = 'running';
+        const originalMatchMedia = window.matchMedia;
+        const originalPlay = HTMLMediaElement.prototype.play;
+        const originalAnimate = Element.prototype.animate;
+        const originalContext = HTMLCanvasElement.prototype.getContext;
+        const hiddenDescriptor = Object.getOwnPropertyDescriptor(document, 'hidden');
+        const originalOverflow = document.body.style.overflow;
+        const motion = new EventTarget();
+        motion.matches = false;
+        window.matchMedia = query => query === '(prefers-reduced-motion: reduce)' ? motion : originalMatchMedia.call(window, query);
+        let hidden = false;
+        Object.defineProperty(document, 'hidden', { configurable: true, get: () => hidden });
+        // Exercise repeated app lifecycles independently of GPU/context limits.
+        // The existing hero checks cover its WebGL effects separately.
+        HTMLCanvasElement.prototype.getContext = function (type, ...args) {
+          return type.startsWith('webgl') && !this.classList.contains('morph-slider-canvas') ? null : originalContext.call(this, type, ...args);
+        };
+        try {
+          document.body.style.overflow = 'clip';
+          mount();
+          await until(() => intro()?.dataset.ready);
+          const wordmark = [...intro().querySelectorAll('.brand-intro__letter--wordmark')];
+          check(wordmark.map(letter => letter.textContent).join('') === 'ZANED' &&
+            wordmark.every(letter => getComputedStyle(letter).fontFamily.includes('Anton')) &&
+            !intro().querySelector('.brand-intro__wordmark img, .brand-intro__letter svg'),
+            'Opening uses plain ZANED text in the existing Anton display typography');
+          const staticLetters = [...intro().querySelectorAll('.brand-intro__wordmark-glyph')];
+          check(wordmark.every((letter, index) => getComputedStyle(letter).font === getComputedStyle(staticLetters[index]).font),
+            'Static and animated wordmarks share the same typography');
+          const suffix = intro().querySelector('.brand-intro__wordmark > .brand-intro__suffix');
+          const suffixStyle = getComputedStyle(suffix);
+          const suffixLetters = [...intro().querySelectorAll('.brand-intro__letter.brand-intro__suffix')];
+          const firstSuffix = suffixLetters[0].getBoundingClientRect();
+          const d = wordmark[4].getBoundingClientRect();
+          check(suffix.textContent === 'inc' && parseFloat(suffixStyle.fontSize) === 26 && Number(suffixStyle.fontWeight) === 400 &&
+            firstSuffix.left > d.right && firstSuffix.top >= d.top && firstSuffix.top - d.top < d.height * 0.1,
+            'inc is smaller, regular weight, and beside the upper-right corner of D');
+          check(intro().querySelectorAll('.brand-intro__tile').length === 11, 'All eleven supplied media slots are present');
+          const videos = [...intro().querySelectorAll('video')];
+          check(videos.length === 4 && videos.every(video => video.muted && video.playsInline && video.loop), 'Four silent inline videos with looping clips');
+          check(clock().effect.getTiming().duration === INTRO_DURATION + INTRO_TRANSITION_DURATION && INTRO_TRANSITION_DURATION === 2000,
+            'Original 7038ms choreography is followed by a two-second liquid transition');
+          check(fixture.querySelector('main').inert && !fixture.querySelector('.zaned-hero'), 'Website is inaccessible and GPU artwork is deferred during the intro');
+          check(document.body.style.overflow === 'hidden', 'Intro locks scrolling');
+          const tagline = intro().querySelector('.brand-intro__tagline');
+          const characters = [...tagline.querySelectorAll('.brand-intro__tagline-char')];
+          const flips = tracks().filter(track => characters.includes(track.effect.target) && track.effect.getTiming().duration === 1100);
+          check(tagline.textContent.trim() === 'Websites that refuse to blend in.' && getComputedStyle(tagline).fontFamily.includes('Belleza'),
+            'Exact tagline uses the existing Belleza text typography below the crown');
+          check(flips.length === characters.length && flips[0].effect.getTiming().delay === 4800 &&
+            Math.abs(Math.max(...flips.map(track => track.effect.getComputedTiming().endTime)) - (INTRO_DURATION - 200)) < 0.1,
+            'The full 1.1-second character stagger finishes exactly 200ms before the hero transition');
+
+          hidden = true;
+          document.dispatchEvent(new Event('visibilitychange'));
+          await Promise.all(tracks().map(track => track.ready));
+          const stopped = clock().currentTime;
+          await pause(140);
+          check(Math.abs(clock().currentTime - stopped) < 1 && videos.every(video => video.paused), 'Hidden tabs pause the entire timeline and all videos');
+          hidden = false;
+          document.dispatchEvent(new Event('visibilitychange'));
+          await until(() => clock().currentTime > stopped + 40);
+          check(clock().currentTime > stopped + 40, 'Returning to the tab resumes without skipping ahead');
+          tracks().forEach(track => { track.pause(); track.currentTime = 5700; });
+          check(characters.some(character => Number(getComputedStyle(character).opacity) > 0) &&
+            characters.some(character => Number(getComputedStyle(character).opacity) === 0),
+            'Tagline reveals left to right while the final characters wait for their stagger');
+          tracks().forEach(track => { track.currentTime = 6838; });
+          check(characters.every(character => Number(getComputedStyle(character).opacity) === 1 &&
+            getComputedStyle(character).color === 'rgb(32, 38, 41)' &&
+            Math.abs(new DOMMatrixReadOnly(getComputedStyle(character).transform).m22 - 1) < 0.0001),
+            'All characters settle upright in ink before the melt begins');
+
+          videos[0].dispatchEvent(new Event('error'));
+          check(videos[0].style.visibility === 'hidden' && !!videos[0].previousElementSibling.src, 'A failed video exposes its image poster');
+          tracks().forEach(track => track.pause());
+          tracks().find(track => track.effect.getTiming().duration === 5400).finish();
+          await until(() => fixture.querySelector('.zaned-hero'));
+          check(fixture.querySelector('main').inert, 'Hero prepares during the closing hold while remaining inaccessible');
+          await until(() => ['ready', 'fallback'].includes(intro()?.dataset.morphState), 7000);
+          check(intro().dataset.morphState === 'ready', 'Morph Slider receives the prepared crown and hero textures');
+          clock().currentTime = 7038;
+          check(getComputedStyle(intro()).opacity === '1', 'Intro remains fully opaque through the exact reference duration');
+          clock().currentTime = INTRO_DURATION + INTRO_TRANSITION_DURATION / 2;
+          await until(() => intro()?.dataset.transition === 'morph');
+          const stage = intro().querySelector('.brand-intro__morph');
+          const canvas = stage.querySelector('canvas');
+          const gl = canvas.getContext('webgl2') || canvas.getContext('webgl');
+          const sample = () => {
+            const bytes = new Uint8Array(canvas.width * canvas.height * 4);
+            gl.readPixels(0, 0, canvas.width, canvas.height, gl.RGBA, gl.UNSIGNED_BYTE, bytes);
+            return bytes;
+          };
+          const midpoint = sample();
+          check(getComputedStyle(intro()).opacity === '1' && getComputedStyle(stage).visibility === 'visible' && !intro().querySelector('feTurbulence'),
+            'The old SVG dissolve is replaced by the actual Morph Slider WebGL shader');
+          check(stage.dataset.transition === 'melt' && stage.dataset.intensity === '0.7' && stage.dataset.scale === '10' &&
+            stage.dataset.aberration === '0' && stage.dataset.drift === '0' && stage.dataset.overlayOpacity === '0',
+            'Melt settings use fine liquid detail without RGB splitting, idle drift, or a vignette');
+          hidden = true;
+          document.dispatchEvent(new Event('visibilitychange'));
+          await pause(80);
+          check(sample().every((byte, index) => byte === midpoint[index]),
+            'Hidden tabs also pause the Morph Slider pixels');
+          hidden = false;
+          document.dispatchEvent(new Event('visibilitychange'));
+          tracks().forEach(track => track.pause());
+          clock().currentTime = INTRO_DURATION + INTRO_TRANSITION_DURATION - 1;
+          await pause(80);
+          check(sample().some((byte, index) => Math.abs(byte - midpoint[index]) > 24),
+            'The shader reaches the hero image before the overlay is removed');
+          clock().finish();
+          await until(() => !intro() && document.body.style.overflow === 'clip');
+          check(!fixture.querySelector('main').inert && document.body.style.overflow === 'clip' && videos.every(video => video.paused), 'Completion removes the overlay, unlocks the site, and stops every video');
+
+          mount();
+          await until(() => intro()?.dataset.ready);
+          tracks().forEach(track => track.pause());
+          tracks().find(track => track.effect.getTiming().duration === 5400).finish();
+          await until(() => intro()?.dataset.morphState === 'ready', 7000);
+          const lostCanvas = intro().querySelector('.morph-slider-canvas');
+          const lostContext = lostCanvas.getContext('webgl2') || lostCanvas.getContext('webgl');
+          lostContext.getExtension('WEBGL_lose_context').loseContext();
+          clock().currentTime = INTRO_DURATION + 1;
+          await until(() => !intro());
+          check(!fixture.querySelector('main').inert, 'Losing the morph WebGL context immediately unlocks the live hero');
+
+          const availableContext = HTMLCanvasElement.prototype.getContext;
+          HTMLCanvasElement.prototype.getContext = function (type, ...args) {
+            return type.startsWith('webgl') ? null : originalContext.call(this, type, ...args);
+          };
+          mount();
+          await until(() => intro()?.dataset.ready);
+          tracks().forEach(track => track.pause());
+          tracks().find(track => track.effect.getTiming().duration === 5400).finish();
+          await until(() => intro()?.dataset.morphState === 'fallback', 7000);
+          clock().currentTime = INTRO_DURATION + 1;
+          await until(() => !intro());
+          check(!!fixture.querySelector('.zaned-hero') && !fixture.querySelector('main').inert,
+            'Unavailable WebGL skips the morph instead of trapping visitors at the crown');
+          HTMLCanvasElement.prototype.getContext = availableContext;
+
+          mount();
+          await until(() => intro()?.dataset.ready);
+          check(true, 'A fresh app mount replays the intro without persisted completion');
+          document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }));
+          await until(() => !intro());
+          check(!!fixture.querySelector('.zaned-hero'), 'Escape skips directly to the hero');
+
+          motion.matches = true;
+          mount();
+          check(!intro() && !!fixture.querySelector('.zaned-hero'), 'Initial reduced-motion preference bypasses the intro');
+          motion.matches = false;
+          mount();
+          await until(() => intro()?.dataset.ready);
+          motion.matches = true;
+          motion.dispatchEvent(new Event('change'));
+          await until(() => !intro());
+          check(true, 'Changing reduced motion during playback immediately reveals the site');
+
+          motion.matches = false;
+          HTMLMediaElement.prototype.play = () => Promise.reject(new DOMException('Test autoplay blocked', 'NotAllowedError'));
+          mount();
+          await until(() => intro()?.dataset.ready);
+          clock().finish();
+          await until(() => !intro());
+          check(true, 'Blocked autoplay never blocks website completion');
+          HTMLMediaElement.prototype.play = originalPlay;
+
+          Element.prototype.animate = undefined;
+          mount();
+          await until(() => !intro() && fixture.querySelector('.zaned-hero'));
+          check(true, 'Unavailable animation API falls back to the website');
+          Element.prototype.animate = originalAnimate;
+
+          let completions = 0;
+          unmount();
+          flushSync(() => root.render(React.createElement(React.StrictMode, null,
+            React.createElement(BrandIntro, { onPrepare() {}, onComplete() { completions++; } }))));
+          await until(() => intro()?.dataset.ready);
+          const detachedVideos = [...intro().querySelectorAll('video')];
+          document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }));
+          document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }));
+          check(completions === 1, 'Strict Mode and repeated completion triggers call onComplete exactly once');
+          unmount();
+          check(fixture.getAnimations({ subtree: true }).length === 0 && detachedVideos.every(video => video.paused), 'Unmount cleans up animations and media');
+          results.dataset.status = 'passed';
+        } catch (error) {
+          const item = document.createElement('li');
+          item.textContent = `FAIL: ${error.message}`;
+          results.append(item);
+          results.dataset.status = 'failed';
+          console.error(error);
+        } finally {
+          unmount();
+          window.matchMedia = originalMatchMedia;
+          HTMLMediaElement.prototype.play = originalPlay;
+          Element.prototype.animate = originalAnimate;
+          HTMLCanvasElement.prototype.getContext = originalContext;
+          if (hiddenDescriptor) Object.defineProperty(document, 'hidden', hiddenDescriptor);
+          else delete document.hidden;
+          document.body.style.overflow = originalOverflow;
+          run.disabled = false;
+        }
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,6 @@
+PASS: Labels and guides at 96px use normal spacing
+PASS: Labels and guides at 42px use normal spacing
+PASS: Labels and guides at 32px use normal spacing
+PASS: Drag target extends beyond the old 32px inline canvas inset
+PASS: Dragged inline glyph remains visible after moving 48px horizontally and 80px vertically
+PASS: Dragged inline glyph springs back after pointerup

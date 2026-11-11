@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Glass Surface checks</title>
+    <style>
+      body { margin: 24px; background: #f1f2f2; color: #202629; font: 16px/1.5 system-ui; }
+      #fixture { margin-top: 24px; --font-body: system-ui; --color-ink: #202629; --color-paper: #f1f2f2; }
+      pre { white-space: pre-wrap; }
+    </style>
+  </head>
+  <body>
+    <h1>Glass Surface checks</h1>
+    <button id="run" type="button">Run checks</button>
+    <pre id="results" role="status">Ready.</pre>
+    <div id="fixture"></div>
+    <script type="module">
+      import React, { StrictMode } from 'react';
+      import { createRoot } from 'react-dom/client';
+      import { renderToStaticMarkup } from 'react-dom/server';
+      import GlassSurface from '../src/components/GlassSurface.jsx';
+      import HeroSection from '../src/components/HeroSection.jsx';
+
+      const fixture = document.querySelector('#fixture');
+      const output = document.querySelector('#results');
+      const run = document.querySelector('#run');
+      const frame = () => new Promise(resolve => requestAnimationFrame(resolve));
+      const settle = async () => { for (let i = 0; i < 4; i++) await frame(); };
+
+      run.addEventListener('click', async () => {
+        run.disabled = true;
+        output.textContent = '';
+        const supports = CSS.supports;
+        const root = createRoot(fixture);
+        const check = (condition, label) => {
+          if (!condition) throw new Error(label);
+          output.textContent += `PASS: ${label}\n`;
+        };
+        try {
+          const preview = renderToStaticMarkup(React.createElement(HeroSection));
+          const linked = renderToStaticMarkup(React.createElement(HeroSection, { projectHref: '#project' }));
+          check(!/disabled/.test(preview), 'All four preview controls are enabled');
+          check(/<a[^>]*href="#project"/.test(linked), 'projectHref still renders a native link');
+          const ids = [...preview.matchAll(/<filter id="([^"]+)"/g)].map(match => match[1]);
+          check(ids.length === 2 && new Set(ids).size === 2, 'Navbar and CTA have unique filter IDs');
+
+          CSS.supports = (property, value) => property === 'backdrop-filter' && value?.startsWith('url(')
+            ? false : supports.call(CSS, property, value);
+          root.render(React.createElement(StrictMode, null,
+            React.createElement(GlassSurface, { as: 'button', type: 'button', key: 'fallback', style: { width: 200, height: 54 } }, 'Preview')));
+          await settle();
+          check(fixture.querySelector('button.glass-surface--frosted'), 'Unsupported SVG filters use the frosted material');
+          check(!fixture.querySelector('canvas'), 'The material adds no WebGL canvas');
+
+          CSS.supports = supports;
+          root.render(React.createElement(StrictMode, null,
+            React.createElement(GlassSurface, { as: 'button', type: 'button', key: 'supported', style: { width: 200, height: 54 } }, 'Preview')));
+          await settle();
+          const surface = fixture.querySelector('button');
+          if (surface.classList.contains('glass-surface--refractive')) {
+            const before = surface.querySelector('feImage').getAttribute('href');
+            check(before?.startsWith('data:image/svg+xml,'), 'Supported browsers generate the SVG refraction map');
+            surface.style.width = '260px';
+            await settle();
+            check(before !== surface.querySelector('feImage').getAttribute('href'), 'ResizeObserver refreshes the map after resizing');
+          } else {
+            check(getComputedStyle(surface).backdropFilter !== 'none', 'This browser uses the frosted blur fallback');
+          }
+          const rules = [...document.styleSheets].flatMap(sheet => [...sheet.cssRules]);
+          const reduced = rules.filter(rule => rule.conditionText === '(prefers-reduced-motion: reduce)').map(rule => rule.cssText).join('');
+          check(reduced.includes('.site-header__link') && reduced.includes('.zaned-hero__cta') && reduced.includes('transform: none'), 'Reduced-motion rules cover both controls');
+          check(rules.some(rule => rule.conditionText?.startsWith('not ') && rule.cssText.includes('--glass-background-solid')), 'A solid material fallback covers browsers without backdrop filters');
+          output.textContent += 'All checks passed.';
+        } catch (error) {
+          output.textContent += `FAIL: ${error.message}`;
+        } finally {
+          CSS.supports = supports;
+          root.unmount();
+          run.disabled = false;
+        }
+      });
+    </script>
+  </body>
+</html>

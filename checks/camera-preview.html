@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ZANED camera preview</title>
+    <style>
+      body { margin: 0; background: #e2e6e5; color: #202629; font: 14px/1.4 system-ui, sans-serif; }
+      nav { display: flex; flex-wrap: wrap; gap: 8px; padding: 12px; }
+      button { padding: 8px 12px; cursor: pointer; }
+      #stage { position: relative; height: calc(100svh - 112px); overflow: hidden; }
+      iframe { position: absolute; top: 0; border: 0; transform-origin: 0 0; }
+      output { display: block; padding: 0 12px 12px; }
+    </style>
+  </head>
+  <body>
+    <script type="module">
+      import React from 'react';
+      import { createRoot } from 'react-dom/client';
+      import HeroSection from '/src/components/HeroSection.jsx';
+      import '/src/styles/base.css';
+
+      if (new URL(location.href).searchParams.has('scene')) {
+        document.body.style.background = '#f5f6f5';
+        const root = document.createElement('div');
+        document.body.append(root);
+        createRoot(root).render(React.createElement(HeroSection));
+      } else {
+        const nav = document.createElement('nav');
+        const output = document.createElement('output');
+        const stage = document.createElement('div');
+        stage.id = 'stage';
+        const frame = document.createElement('iframe');
+        frame.title = 'Live hero at the selected viewport';
+        frame.src = '/checks/camera-preview.html?scene';
+        stage.append(frame);
+        document.body.append(nav, output, stage);
+        let width = 1440;
+        let height = 900;
+        const resize = () => {
+          const scale = Math.min(stage.clientWidth / width, stage.clientHeight / height);
+          Object.assign(frame.style, { width: `${width}px`, height: `${height}px`, transform: `scale(${scale})`, left: `${(stage.clientWidth - width * scale) / 2}px` });
+          output.textContent = `${width} × ${height} — live camera preview`;
+        };
+        const button = (label, action) => {
+          const control = document.createElement('button');
+          control.type = 'button';
+          control.textContent = label;
+          control.addEventListener('click', action);
+          nav.append(control);
+        };
+        for (const [label, w, h] of [['Desktop', 1440, 900], ['Phone', 390, 844], ['Landscape', 844, 390]]) {
+          button(label, () => { width = w; height = h; resize(); });
+        }
+        for (const [label, x, y] of [['Look left', 0.02, 0.5], ['Look right', 0.98, 0.5], ['Look up', 0.5, 0.02], ['Look down', 0.5, 0.98], ['Center', 0.5, 0.5]]) {
+          button(label, () => {
+            const hero = frame.contentDocument.querySelector('.zaned-hero');
+            hero?.dispatchEvent(new frame.contentWindow.PointerEvent('pointermove', { clientX: width * x, clientY: height * y, pointerType: 'mouse' }));
+          });
+        }
+        window.addEventListener('resize', resize);
+        resize();
+      }
+    </script>
+  </body>
+</html>

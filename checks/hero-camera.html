@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Hero camera browser checks</title>
+    <style>
+      body { margin: 24px; font: 15px/1.5 system-ui, sans-serif; }
+      #fixture { width: 420px; max-width: 100%; }
+      #fixture .zaned-hero { --camera-half-height: 170px; block-size: 340px; }
+      #fixture .zaned-hero__scene { padding: 70px 16px 0; gap: 12px; }
+      #fixture .zaned-hero__heading { font-size: 26px; }
+      #fixture .zaned-hero__description { font-size: 10px; margin-top: 8px; }
+      #fixture .zaned-hero__cta { margin-top: 8px; min-height: 32px; }
+      [data-status="failed"] { color: #9b2424; }
+    </style>
+  </head>
+  <body>
+    <h1>Hero camera browser checks</h1>
+    <button id="run" type="button">Run checks</button>
+    <div id="fixture"></div>
+    <ol id="results"></ol>
+    <script type="module">
+      import React from 'react';
+      import { createRoot } from 'react-dom/client';
+      import HeroSection from '/src/components/HeroSection.jsx';
+      import '/src/styles/base.css';
+
+      const fixture = document.querySelector('#fixture');
+      const results = document.querySelector('#results');
+      const run = document.querySelector('#run');
+      const pause = ms => new Promise(resolve => setTimeout(resolve, ms));
+      async function until(predicate) {
+        const deadline = performance.now() + 5000;
+        while (!predicate()) {
+          if (performance.now() > deadline) throw new Error('Timed out waiting for the camera');
+          await pause(20);
+        }
+      }
+      function check(condition, label) {
+        if (!condition) throw new Error(label);
+        const item = document.createElement('li');
+        item.textContent = `PASS: ${label}`;
+        results.append(item);
+      }
+
+      run.addEventListener('click', async () => {
+        run.disabled = true;
+        results.replaceChildren();
+        results.dataset.status = 'running';
+        const getContext = HTMLCanvasElement.prototype.getContext;
+        const matchMedia = window.matchMedia;
+        const hiddenDescriptor = Object.getOwnPropertyDescriptor(document, 'hidden');
+        const motion = new EventTarget();
+        const pointer = new EventTarget();
+        const compact = new EventTarget();
+        motion.matches = false;
+        pointer.matches = true;
+        compact.matches = false;
+        window.matchMedia = query => query === '(prefers-reduced-motion: reduce)' ? motion :
+          query === '(hover: hover) and (pointer: fine)' ? pointer :
+          query === '(max-width: 600px)' ? compact : matchMedia.call(window, query);
+        let hidden = false;
+        Object.defineProperty(document, 'hidden', { configurable: true, get: () => hidden });
+        // Exercise the real hero and its camera independently of GPU availability.
+        HTMLCanvasElement.prototype.getContext = function (type, ...args) {
+          return type.startsWith('webgl') ? null : getContext.call(this, type, ...args);
+        };
+        const root = createRoot(fixture);
+        let mounted = true;
+        try {
+          root.render(React.createElement(React.StrictMode, null, React.createElement(HeroSection)));
+          await until(() => fixture.querySelector('.zaned-hero__scene')?.style.transform);
+          await document.fonts.ready;
+          await pause(80);
+          const hero = fixture.querySelector('.zaned-hero');
+          const background = hero.querySelector('.zaned-hero__background');
+          const content = hero.querySelector('.zaned-hero__content');
+          const scene = hero.querySelector('.zaned-hero__scene');
+          const stage = hero.querySelector('.zaned-hero__artworks');
+          const left = hero.querySelector('.zaned-hero__artwork--left');
+          const middle = hero.querySelector('.zaned-hero__artwork--middle');
+          const nodes = [scene, background, content, stage, ...hero.querySelectorAll('.zaned-hero__depth, .zaned-hero__artwork')];
+          const pose = () => nodes.map(node => node.style.transform).join('|');
+          const offset = node => {
+            const rect = node.getBoundingClientRect();
+            return rect.left + rect.width / 2;
+          };
+          const fixedLayers = () => nodes.slice(1).map(node => getComputedStyle(node).transform).join('|');
+          const layerTransforms = fixedLayers();
+          const idle = pose();
+          await until(() => pose() !== idle);
+          check(true, 'Strict Mode starts ambient camera movement without WebGL');
+
+          const before = [background, content, left, middle].map(offset);
+          const current = pose();
+          const rect = hero.getBoundingClientRect();
+          hero.dispatchEvent(new PointerEvent('pointermove', { clientX: rect.left + rect.width * 0.95,
+            clientY: rect.top + rect.height * 0.7, pointerType: 'mouse' }));
+          check(pose() === current, 'Pointer movement eases into position instead of snapping');
+          await until(() => offset(middle) - before[3] < -6);
+          const travel = [background, content, left, middle].map((node, i) => offset(node) - before[i]);
+          check(travel[3] < -6 && travel[2] > 3,
+            `A rightward camera move reveals opposing near/far parallax (${travel.map(value => value.toFixed(1)).join(', ')}px)`);
+          check(fixedLayers() === layerTransforms && nodes.slice(1).every(node => !node.style.transform),
+            'The background, headline, and all portraits retain fixed world transforms');
+          check(getComputedStyle(hero.querySelector('.zaned-hero__viewport')).perspective === '1200px' &&
+            getComputedStyle(scene).transformStyle === 'preserve-3d' && scene.style.transform.includes('rotateY'),
+            'One perspective viewport and one inverse camera pose render the entire 3D scene');
+          check(new DOMMatrixReadOnly(getComputedStyle(hero.querySelector('.zaned-hero__depth--middle')).transform).m43 > 0 &&
+            new DOMMatrixReadOnly(getComputedStyle(hero.querySelector('.zaned-hero__depth--left')).transform).m43 < 0,
+            'Portraits occupy real foreground and background Z planes');
+          check(getComputedStyle(hero.querySelector('header')).transform === 'none', 'Navigation stays anchored');
+
+          hero.dispatchEvent(new PointerEvent('pointermove', { clientX: rect.left + rect.width * 0.95,
+            clientY: rect.top + rect.height * 0.02, pointerType: 'mouse' }));
+          await pause(400);
+          check(middle.getBoundingClientRect().bottom >= rect.bottom,
+            'Upward camera movement keeps the portrait lower edge outside the viewport');
+
+          hero.dispatchEvent(new PointerEvent('pointermove', { clientX: rect.left + rect.width * 0.05,
+            clientY: rect.top + rect.height * 0.5, pointerType: 'mouse' }));
+          await until(() => offset(middle) > before[3] + 6);
+          const engaged = offset(middle);
+          hero.dispatchEvent(new PointerEvent('pointerleave'));
+          await until(() => offset(middle) < engaged - 4);
+          check(true, 'Leaving the hero smoothly releases the pointer camera offset');
+
+          motion.matches = true;
+          motion.dispatchEvent(new Event('change'));
+          check(nodes.every(node => !node.style.transform && !node.style.willChange),
+            'Live reduced motion immediately restores the original static composition');
+          const frozen = pose();
+          await pause(150);
+          check(pose() === frozen, 'Reduced motion leaves no running camera updates');
+          motion.matches = false;
+          motion.dispatchEvent(new Event('change'));
+          await until(() => scene.style.transform);
+          check(true, 'Camera movement resumes when reduced motion is disabled');
+
+          pointer.matches = false;
+          pointer.dispatchEvent(new Event('change'));
+          await pause(100);
+          const touchStart = offset(middle);
+          hero.dispatchEvent(new PointerEvent('pointermove', { clientX: rect.right, clientY: rect.bottom, pointerType: 'touch' }));
+          await pause(200);
+          check(Math.abs(offset(middle) - touchStart) < 2, 'Touch devices retain a small drift without responding to touch gestures');
+
+          compact.matches = true;
+          pointer.matches = true;
+          pointer.dispatchEvent(new Event('change'));
+          hero.dispatchEvent(new PointerEvent('pointermove', { clientX: rect.right, clientY: rect.bottom, pointerType: 'mouse' }));
+          await pause(300);
+          const narrowCamera = /translate3d\(([-.\d]+)px/.exec(scene.style.transform);
+          check(Math.abs(Number(narrowCamera[1])) < 25,
+            'Narrow layouts limit camera travel while retaining the same 3D world');
+
+          hidden = true;
+          document.dispatchEvent(new Event('visibilitychange'));
+          const hiddenPose = pose();
+          await pause(150);
+          check(pose() === hiddenPose, 'Hidden pages pause the camera');
+          hidden = false;
+          document.dispatchEvent(new Event('visibilitychange'));
+          await until(() => pose() !== hiddenPose);
+
+          fixture.style.marginTop = '200vh';
+          await until(() => !scene.style.willChange);
+          const offscreen = pose();
+          await pause(150);
+          check(pose() === offscreen, 'Offscreen heroes pause the camera');
+          fixture.style.marginTop = '0';
+          await until(() => pose() !== offscreen);
+          check(true, 'The camera resumes when the hero returns onscreen');
+
+          root.unmount();
+          mounted = false;
+          await pause(100);
+          check(nodes.every(node => !node.style.transform && !node.style.willChange),
+            'Unmount cancels the camera and cleans up its transforms');
+          results.dataset.status = 'passed';
+        } catch (error) {
+          results.dataset.status = 'failed';
+          const item = document.createElement('li');
+          item.textContent = `FAIL: ${error.message}`;
+          results.append(item);
+        } finally {
+          if (mounted) root.unmount();
+          fixture.style.marginTop = '0';
+          HTMLCanvasElement.prototype.getContext = getContext;
+          window.matchMedia = matchMedia;
+          if (hiddenDescriptor) Object.defineProperty(document, 'hidden', hiddenDescriptor);
+          else delete document.hidden;
+          run.disabled = false;
+        }
+      });
+    </script>
+  </body>
+</html>

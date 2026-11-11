@@ -1,0 +1,337 @@
+.zaned-hero {
+  --hero-gutter: max(5vw, calc((100vw - 1600px) / 2));
+  --camera-half-height: 50svh;
+
+  position: relative;
+  isolation: isolate;
+  block-size: 100svh;
+  overflow: clip;
+  background: var(--color-paper);
+  color: var(--color-ink);
+}
+
+.zaned-hero__viewport {
+  position: absolute;
+  inset: 0;
+  perspective: 1200px;
+  perspective-origin: 50% 50%;
+}
+
+.zaned-hero__scene {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: auto minmax(0, 1fr);
+  gap: clamp(24px, 3svh, 32px);
+  padding: clamp(112px, 13svh, 152px) var(--hero-gutter) 0;
+  transform-style: preserve-3d;
+}
+
+.zaned-hero__backdrop {
+  position: absolute;
+  z-index: -2;
+  inset: -12%;
+  pointer-events: none;
+}
+
+.zaned-hero[data-camera] .zaned-hero__backdrop {
+  transform: translateZ(-700px) scale(1.583333);
+}
+
+.zaned-hero__background {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(115deg, var(--color-paper), var(--color-silver) 60%, var(--color-graphite));
+}
+
+.zaned-hero__backdrop::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(180deg,
+    color-mix(in srgb, var(--color-paper) 93%, transparent) 0%,
+    color-mix(in srgb, var(--color-paper) 85%, transparent) 32%,
+    color-mix(in srgb, var(--color-paper) 40%, transparent) 58%,
+    transparent 82%);
+}
+
+.zaned-hero__content {
+  position: relative;
+  z-index: 1;
+  justify-self: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-inline-size: 0;
+  inline-size: 100%;
+  text-align: center;
+}
+
+.zaned-hero__heading {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(3rem, min(9vw, 11svh), 6rem);
+  font-weight: 400;
+  line-height: 1.04;
+  letter-spacing: -0.015em;
+}
+
+.zaned-hero__line {
+  display: block;
+  white-space: nowrap;
+}
+
+.zaned-hero__description {
+  max-inline-size: min(62ch, 44rem);
+  margin: 20px 0 0;
+  font-family: var(--font-description);
+  font-size: clamp(18px, 1.5vw, 22px);
+  font-weight: 400;
+  line-height: 1.45;
+  letter-spacing: 0.005em;
+  text-wrap: balance;
+  color: var(--color-body);
+}
+
+.zaned-hero__cta {
+  --glass-background: linear-gradient(155deg, rgb(58 66 72 / 95%), rgb(25 31 35 / 98%));
+  --glass-background-solid: #202629;
+  --glass-border: rgb(255 255 255 / 30%);
+  --glass-shadow: 0 8px 20px rgb(32 38 41 / 16%), 0 2px 5px rgb(32 38 41 / 8%), inset 0 1px 0 rgb(255 255 255 / 24%), inset 0 -1px 0 rgb(0 0 0 / 18%);
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 28px;
+  min-block-size: 54px;
+  margin-block-start: 20px;
+  padding: 7px 8px 7px 23px;
+  color: var(--color-paper);
+  font: 400 17px / 1.35 var(--font-description);
+  letter-spacing: 0.005em;
+  text-decoration: none;
+  cursor: pointer;
+  touch-action: manipulation;
+  transition: box-shadow 200ms ease, transform 200ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.zaned-hero__cta::before {
+  opacity: 0.55;
+  transition: opacity 200ms ease;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .zaned-hero__cta:hover::before {
+    opacity: 1;
+  }
+
+  .zaned-hero__cta:hover .zaned-hero__arrow {
+    transform: translate(2px, -2px);
+  }
+
+  .zaned-hero__cta:hover .zaned-hero__arrow-disc {
+    background: rgb(255 255 255 / 19%);
+  }
+}
+
+.zaned-hero__cta:active {
+  transform: scale(0.975);
+  box-shadow: 0 3px 8px rgb(32 38 41 / 12%), inset 0 2px 4px rgb(0 0 0 / 20%);
+  transition-duration: 70ms;
+}
+
+.zaned-hero__cta:focus-visible {
+  outline: 2px solid var(--color-ink);
+  outline-offset: 5px;
+}
+
+.zaned-hero__arrow {
+  flex: none;
+  inline-size: 15px;
+  block-size: 15px;
+  transition: transform 200ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.zaned-hero__arrow-disc {
+  display: grid;
+  place-items: center;
+  flex: none;
+  inline-size: 36px;
+  block-size: 36px;
+  border: 1px solid rgb(255 255 255 / 18%);
+  border-radius: 50%;
+  background: rgb(255 255 255 / 10%);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 12%);
+  transition: background-color 200ms ease;
+}
+
+.zaned-hero__artworks {
+  position: relative;
+  container-type: size;
+  align-self: end;
+  justify-self: center;
+  inline-size: min(100%, 1120px);
+  block-size: min(100%, 48svh, 46vw);
+  min-block-size: 0;
+  pointer-events: none;
+  transform-style: preserve-3d;
+}
+
+.zaned-hero__depth {
+  position: absolute;
+  inset: 0;
+  /* Use the viewport's projection center so depth does not change the resting layout. */
+  transform-origin: 50% calc(100% - var(--camera-half-height));
+  transform-style: preserve-3d;
+}
+
+.zaned-hero[data-camera] .zaned-hero__depth {
+  transform: translateY(18px) translateZ(var(--depth)) scale(var(--depth-scale));
+}
+
+.zaned-hero__depth--left {
+  --depth: -160px;
+  --depth-scale: 1.133333;
+}
+
+.zaned-hero__depth--middle {
+  --depth: 180px;
+  --depth-scale: 0.85;
+  z-index: 1;
+}
+
+.zaned-hero__depth--right {
+  --depth: -60px;
+  --depth-scale: 1.05;
+}
+
+.zaned-hero__artwork {
+  position: absolute;
+  inline-size: auto;
+  block-size: 64%;
+  transform: translateX(-50%);
+}
+
+.zaned-hero__artwork--left {
+  aspect-ratio: 844 / 750;
+  inset-inline-start: calc(50% - min(25cqw, 46cqh));
+  inset-block-end: 10%;
+}
+
+.zaned-hero__artwork--middle {
+  aspect-ratio: 1103 / 1426;
+  z-index: 1;
+  inset-inline-start: 50%;
+  inset-block-end: 0;
+  block-size: 100%;
+}
+
+.zaned-hero__artwork--right {
+  aspect-ratio: 1330 / 1182;
+  inset-inline-start: calc(50% + min(25cqw, 46cqh));
+  inset-block-end: 18%;
+}
+
+@media (max-width: 900px) {
+  .zaned-hero {
+    --hero-gutter: clamp(24px, 5vw, 40px);
+  }
+
+  .zaned-hero__scene {
+    padding-block-start: 112px;
+  }
+
+  .zaned-hero__heading {
+    font-size: clamp(2.5rem, 14vw, 5rem);
+  }
+
+  .zaned-hero__description {
+    font-size: 18px;
+  }
+
+  .zaned-hero__artworks {
+    inline-size: calc(100% + 2 * var(--hero-gutter));
+    max-inline-size: 1120px;
+    block-size: min(100%, 96vw, 48svh);
+  }
+}
+
+@media (max-width: 600px) {
+  .zaned-hero[data-camera] .zaned-hero__depth {
+    transform: translateY(8px) translateZ(var(--depth)) scale(var(--depth-scale));
+  }
+
+  .zaned-hero__artwork:not(.zaned-hero__artwork--middle) {
+    block-size: 46%;
+  }
+}
+
+@media (max-width: 900px) and (max-height: 700px) {
+  .zaned-hero {
+    --hero-gutter: 20px;
+  }
+
+  .zaned-hero__scene {
+    gap: 16px;
+    padding-block-start: 96px;
+  }
+
+  .zaned-hero__description {
+    margin-block-start: 16px;
+    font-size: 16px;
+    line-height: 1.45;
+  }
+
+  .zaned-hero__cta {
+    min-block-size: 48px;
+    margin-block-start: 16px;
+    padding-block: 5px;
+  }
+}
+
+@media (min-width: 601px) and (max-height: 600px) {
+  .zaned-hero__scene {
+    gap: 12px;
+    padding-block-start: 88px;
+  }
+
+  .zaned-hero__heading {
+    display: flex;
+    justify-content: center;
+    gap: 0.22em;
+    font-size: clamp(1.5rem, min(5.8vw, 9svh), 3rem);
+  }
+
+  .zaned-hero__description {
+    max-inline-size: 64ch;
+    margin-block-start: 12px;
+    font-size: 16px;
+    line-height: 1.4;
+  }
+
+  .zaned-hero__cta {
+    min-block-size: 48px;
+    margin-block-start: 12px;
+    padding: 5px 6px 5px 20px;
+  }
+
+  .zaned-hero__artworks {
+    max-inline-size: min(1120px, 150svh);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .zaned-hero__cta,
+  .zaned-hero__cta::before,
+  .zaned-hero__arrow,
+  .zaned-hero__arrow-disc {
+    transition: none;
+  }
+
+  .zaned-hero__cta:active,
+  .zaned-hero__cta:hover .zaned-hero__arrow {
+    transform: none;
+  }
+}

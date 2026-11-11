@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TechText browser checks</title>
+    <link rel="stylesheet" href="/src/styles/base.css" />
+    <style>
+      body { margin: 24px; font: 16px/1.5 system-ui, sans-serif; }
+      #fixture { padding-block: 64px; font-family: 'Inter Tight', sans-serif; font-size: 96px; font-weight: 900; letter-spacing: -0.04em; line-height: 0.99; }
+      #results { min-block-size: 180px; }
+      [data-status="failed"] { color: #9b2424; }
+    </style>
+  </head>
+  <body>
+    <h1>TechText browser checks</h1>
+    <p>Checks the real canvas labels with the headline's negative tracking in React Strict Mode.</p>
+    <button id="run" type="button">Run checks</button>
+    <ol id="results"></ol>
+    <div id="camera-viewport" style="position: relative; perspective: 1200px"><div id="fixture" style="position: relative"></div></div>
+    <script type="module">
+      import React from 'react';
+      import { createRoot } from 'react-dom/client';
+      import TechText from '/src/components/TechText.jsx';
+
+      const fixture = document.querySelector('#fixture');
+      const results = document.querySelector('#results');
+      const run = document.querySelector('#run');
+      const pause = ms => new Promise(resolve => setTimeout(resolve, ms));
+      async function until(predicate) {
+        const deadline = performance.now() + 8000;
+        while (!predicate()) {
+          if (performance.now() > deadline) throw new Error('Timed out waiting for animation labels');
+          await pause(20);
+        }
+      }
+      function alphaInClientRect(canvas, rect) {
+        const bounds = canvas.getBoundingClientRect();
+        const scaleX = canvas.width / bounds.width;
+        const scaleY = canvas.height / bounds.height;
+        const left = Math.max(0, Math.floor((rect.left - bounds.left) * scaleX));
+        const top = Math.max(0, Math.floor((rect.top - bounds.top) * scaleY));
+        const right = Math.min(canvas.width, Math.ceil((rect.right - bounds.left) * scaleX));
+        const bottom = Math.min(canvas.height, Math.ceil((rect.bottom - bounds.top) * scaleY));
+        if (right <= left || bottom <= top) return 0;
+        const pixels = canvas.getContext('2d').getImageData(left, top, right - left, bottom - top).data;
+        let count = 0;
+        for (let i = 3; i < pixels.length; i += 4) if (pixels[i] > 240) count++;
+        return count;
+      }
+      function check(condition, label) {
+        if (!condition) throw new Error(label);
+        const item = document.createElement('li');
+        item.textContent = `PASS: ${label}`;
+        results.append(item);
+      }
+
+      run.addEventListener('click', async () => {
+        run.disabled = true;
+        results.replaceChildren();
+        results.dataset.status = 'running';
+        const fillText = CanvasRenderingContext2D.prototype.fillText;
+        const samples = [];
+        const reference = document.createElement('canvas').getContext('2d');
+        CanvasRenderingContext2D.prototype.fillText = function (text, ...args) {
+          if (this.canvas.classList.contains('tech-text-canvas')) {
+            reference.font = this.font;
+            samples.push({ text, spacing: this.letterSpacing, actual: this.measureText(text).width, expected: reference.measureText(text).width });
+          }
+          return fillText.call(this, text, ...args);
+        };
+        fixture.classList.add('zaned-hero__scene');
+        const root = createRoot(fixture);
+        try {
+          for (const fontSize of [96, 42, 32]) {
+            fixture.style.fontSize = `${fontSize}px`;
+            samples.length = 0;
+            root.render(React.createElement(React.StrictMode, null,
+              React.createElement(TechText, { key: fontSize, text: 'YOUR VISION.', fontSize: 'inherit', fontWeight: 900, letterSpacing: -0.04, echoO: true, guides: true })));
+            await until(() => samples.some(sample => sample.text.includes('×')) && samples.some(sample => sample.text === 'baseline'));
+            const bad = samples.find(sample => Math.abs(sample.actual - sample.expected) > 0.1);
+            check(!bad, `Labels and guides at ${fontSize}px use normal spacing${bad ? ` ("${bad.text}": ${bad.actual.toFixed(1)}px, expected ${bad.expected.toFixed(1)}px; tracking ${bad.spacing})` : ''}`);
+          }
+
+          fixture.style.fontFamily = 'Anton, sans-serif';
+          fixture.style.fontSize = 'clamp(32px, 7vw, 112px)';
+          fixture.style.fontWeight = '400';
+          fixture.style.lineHeight = '1.2';
+          await document.fonts.load('400 112px Anton');
+          const previousInline = fixture.querySelector('.tech-text');
+          root.render(React.createElement(React.StrictMode, null,
+            React.createElement(TechText, {
+              key: 'drag-regression', text: 'YOUR VISION.', fontFamily: 'Anton, sans-serif', fontWeight: 400,
+              fontSize: 'inherit', draggable: true, sweep: false, labels: false, selection: false, clickKick: false
+            })));
+          await until(() => fixture.querySelector('.tech-text') !== previousInline);
+          const inline = fixture.querySelector('.tech-text');
+          await until(() => inline?.dataset.ready === 'true' && inline.querySelectorAll('[data-tech-glyph]')[11]?.getBoundingClientRect().height > 0);
+          const canvas = inline.querySelector('.tech-text-canvas');
+          const glyph = inline.querySelectorAll('[data-tech-glyph]')[11];
+          const origin = glyph.getBoundingClientRect();
+          const component = inline.getBoundingClientRect();
+          await until(() => alphaInClientRect(canvas, origin) > 0);
+          const restingPixels = alphaInClientRect(canvas, origin);
+          const startX = origin.left + origin.width / 2;
+          const startY = inline.querySelector('.tech-text-baseline').getBoundingClientRect().top - 7;
+          const dx = 48;
+          const dy = 80;
+          const dragged = { left: origin.left + dx, top: origin.top + dy, right: origin.right + dx, bottom: origin.bottom + dy };
+          const clippedZone = { left: component.right + 32, top: dragged.top, right: dragged.right, bottom: dragged.bottom };
+          check(clippedZone.left < clippedZone.right, 'Drag target extends beyond the old 32px inline canvas inset');
+
+          const captureDescriptor = Object.getOwnPropertyDescriptor(inline, 'setPointerCapture');
+          const releaseDescriptor = Object.getOwnPropertyDescriptor(inline, 'releasePointerCapture');
+          inline.setPointerCapture = () => {};
+          inline.releasePointerCapture = () => {};
+          const pointer = (type, x, y) => inline.dispatchEvent(new PointerEvent(type, {
+            bubbles: true, pointerId: 37, pointerType: 'mouse', button: 0, clientX: x, clientY: y
+          }));
+          try {
+            pointer('pointerdown', startX, startY);
+            pointer('pointermove', startX + dx, startY + dy);
+            await until(() => alphaInClientRect(canvas, clippedZone) > 0);
+            check(true, 'Dragged inline glyph remains visible after moving 48px horizontally and 80px vertically');
+            pointer('pointerup', startX + dx, startY + dy);
+            await until(() => alphaInClientRect(canvas, origin) >= restingPixels * 0.9 && alphaInClientRect(canvas, clippedZone) === 0);
+            check(true, 'Dragged inline glyph springs back after pointerup');
+          } finally {
+            if (captureDescriptor) Object.defineProperty(inline, 'setPointerCapture', captureDescriptor);
+            else delete inline.setPointerCapture;
+            if (releaseDescriptor) Object.defineProperty(inline, 'releasePointerCapture', releaseDescriptor);
+            else delete inline.releasePointerCapture;
+          }
+          // Freeze a real camera pose and send projected pointer coordinates.
+          fixture.classList.add('zaned-hero__scene');
+          fixture.style.transform = 'translateZ(1200px) rotateY(-5deg) translate3d(-105px, 0px, -1210px)';
+          window.dispatchEvent(new Event('resize'));
+          await pause(120);
+          const layout = node => {
+            let x = 0, y = 0;
+            for (; node; node = node.offsetParent) { x += node.offsetLeft; y += node.offsetTop; }
+            return { x, y };
+          };
+          const canvasOrigin = layout(canvas);
+          const glyphOrigin = layout(glyph);
+          const box = { x: glyphOrigin.x - canvasOrigin.x, y: glyphOrigin.y - canvasOrigin.y,
+            width: glyph.offsetWidth, height: glyph.offsetHeight };
+          const pixels = (dx = 0, dy = 0) => {
+            const ratio = canvas.width / canvas.clientWidth;
+            const data = canvas.getContext('2d').getImageData(Math.round((box.x + dx) * ratio),
+              Math.round((box.y + dy) * ratio), Math.max(1, Math.round(box.width * ratio)), Math.round(box.height * ratio)).data;
+            return data.reduce((sum, value, i) => sum + (i % 4 === 3 && value > 240 ? 1 : 0), 0);
+          };
+          check(pixels() > 0, 'Resizing under a 5-degree camera view keeps glyphs aligned in the scene');
+          const project = (x, y) => {
+            const origin = layout(fixture);
+            const point = new DOMMatrixReadOnly(getComputedStyle(fixture).transform).transformPoint({
+              x: canvasOrigin.x - origin.x + x - fixture.clientWidth / 2,
+              y: canvasOrigin.y - origin.y + y - fixture.clientHeight / 2, z: 0, w: 1
+            });
+            const viewport = fixture.parentElement.getBoundingClientRect();
+            const scale = 1200 / (1200 - point.z);
+            return [viewport.left + viewport.width / 2 + point.x * scale,
+              viewport.top + viewport.height / 2 + point.y * scale];
+          };
+          const px = box.x + box.width / 2;
+          const py = layout(inline.querySelector('.tech-text-baseline')).y - canvasOrigin.y - 7;
+          inline.setPointerCapture = () => {};
+          inline.releasePointerCapture = () => {};
+          try {
+            pointer('pointerdown', ...project(px, py));
+            pointer('pointermove', ...project(px + 48, py + 80));
+            await until(() => pixels(48, 80) > 0);
+            check(true, 'Pointer unprojection keeps dragging accurate through camera yaw and dolly');
+            pointer('pointerup', ...project(px + 48, py + 80));
+          } finally {
+            delete inline.setPointerCapture;
+            delete inline.releasePointerCapture;
+            fixture.classList.remove('zaned-hero__scene');
+            fixture.style.removeProperty('transform');
+          }
+          results.dataset.status = 'passed';
+        } catch (error) {
+          results.dataset.status = 'failed';
+          const item = document.createElement('li');
+          item.textContent = `FAIL: ${error.message}`;
+          results.append(item);
+        } finally {
+          root.unmount();
+          CanvasRenderingContext2D.prototype.fillText = fillText;
+          run.disabled = false;
+        }
+      });
+    </script>
+  </body>
+</html>

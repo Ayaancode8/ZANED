@@ -1,0 +1,86 @@
+[
+  {
+    "name": "desktop",
+    "width": 1440,
+    "height": 900,
+    "heading": {
+      "font": "\"Inter Tight\", sans-serif",
+      "size": "90px",
+      "weight": "900",
+      "spacing": "-3.6px",
+      "x": 435.296875,
+      "y": 117,
+      "width": 569.40625,
+      "height": 178.1875,
+      "right": 1004.703125,
+      "bottom": 295.1875
+    },
+    "description": {
+      "font": "\"Space Grotesk\", sans-serif",
+      "size": "18px",
+      "x": 408.46875,
+      "y": 315.1875,
+      "width": 623.046875,
+      "height": 54,
+      "right": 1031.515625,
+      "bottom": 369.1875
+    },
+    "cta": {
+      "x": 620.125,
+      "y": 389.1875,
+      "width": 199.75,
+      "height": 54,
+      "right": 819.875,
+      "bottom": 443.1875
+    },
+    "scroll": false,
+    "fonts": [
+      "Inter Tight",
+      "Space Grotesk",
+      "Space Grotesk"
+    ],
+    "errors": []
+  },
+  {
+    "name": "mobile",
+    "width": 390,
+    "height": 844,
+    "heading": {
+      "font": "\"Inter Tight\", sans-serif",
+      "size": "42.12px",
+      "weight": "900",
+      "spacing": "-1.6848px",
+      "x": 61.765625,
+      "y": 112,
+      "width": 266.46875,
+      "height": 83.40625,
+      "right": 328.234375,
+      "bottom": 195.40625
+    },
+    "description": {
+      "font": "\"Space Grotesk\", sans-serif",
+      "size": "16px",
+      "x": 24,
+      "y": 215.40625,
+      "width": 342,
+      "height": 72,
+      "right": 366,
+      "bottom": 287.40625
+    },
+    "cta": {
+      "x": 95.125,
+      "y": 307.40625,
+      "width": 199.75,
+      "height": 54,
+      "right": 294.875,
+      "bottom": 361.40625
+    },
+    "scroll": false,
+    "fonts": [
+      "Inter Tight",
+      "Space Grotesk",
+      "Space Grotesk"
+    ],
+    "errors": []
+  }
+]

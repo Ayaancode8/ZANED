@@ -1,0 +1,42 @@
+{
+  "suites": [
+    {
+      "suite": "brand-intro",
+      "status": "passed",
+      "text": "PASS: Exact ZANED inc opening text\nPASS: Opening preserves natural font proportions\nPASS: All eleven supplied media slots are present\nPASS: Four silent inline videos with looping clips\nPASS: Reference duration is 7038ms, followed by a 200ms fade\nPASS: Website is inaccessible and GPU artwork is deferred during the intro\nPASS: Intro locks scrolling\nPASS: Hidden tabs pause the entire timeline and all videos\nPASS: Returning to the tab resumes without skipping ahead\nPASS: A failed video exposes its image poster\nPASS: Hero prepares during the closing hold while remaining inaccessible\nPASS: Intro remains fully opaque through the exact reference duration\nPASS: Closing fade reveals the prepared hero\nPASS: Completion removes the overlay, unlocks the site, and stops every video\nPASS: A fresh app mount replays the intro without persisted completion\nPASS: Escape skips directly to the hero\nPASS: Initial reduced-motion preference bypasses the intro\nPASS: Changing reduced motion during playback immediately reveals the site\nPASS: Blocked autoplay never blocks website completion\nPASS: Unavailable animation API falls back to the website\nPASS: Strict Mode and repeated completion triggers call onComplete exactly once\nPASS: Unmount cleans up animations and media",
+      "errors": []
+    },
+    {
+      "suite": "glass-surface",
+      "status": "passed",
+      "text": "PASS: All four preview controls are enabled\nPASS: projectHref still renders a native link\nPASS: Navbar and CTA have unique filter IDs\nPASS: Unsupported SVG filters use the frosted material\nPASS: The material adds no WebGL canvas\nPASS: Supported browsers generate the SVG refraction map\nPASS: ResizeObserver refreshes the map after resizing\nPASS: Reduced-motion rules cover both controls\nPASS: A solid material fallback covers browsers without backdrop filters\nAll checks passed.",
+      "errors": []
+    },
+    {
+      "suite": "grid-distortion",
+      "status": "passed",
+      "text": "PASS: Standard screens supersample artwork at 2x resolution\nPASS: Retina phones render artwork at their full 3x resolution\nPASS: Higher densities stay capped at 3x to bound GPU work\nPASS: Transparent corners and opaque artwork survive the shader\nPASS: Pointer movement deforms rendered image pixels\nPASS: Displaced monochrome pixels split into RGB channels\nPASS: Click ripple deforms pixels independently of pointer strength\nPASS: Live reduced motion stops drawing\nPASS: Motion resumes when the preference changes back\nPASS: Hidden pages stop drawing\nPASS: Visible pages resume drawing\nPASS: Context loss reveals the original image\nPASS: Unavailable WebGL keeps the original image visible",
+      "errors": []
+    },
+    {
+      "suite": "hero-camera",
+      "status": "passed",
+      "text": "PASS: Strict Mode starts ambient camera movement without WebGL\nPASS: Pointer movement eases into position instead of snapping\nPASS: Foreground portrait travels farther than the profiles and text (-7.0, 1.3, 5.9, 12.3px)\nPASS: Background travels opposite the foreground for parallax depth\nPASS: The artwork stage receives a perspective camera tilt\nPASS: Navigation stays anchored\nPASS: Upward camera movement keeps the portrait lower edge outside the viewport\nPASS: Leaving the hero smoothly releases the pointer camera offset\nPASS: Live reduced motion immediately restores the original static composition\nPASS: Reduced motion leaves no running camera updates\nPASS: Camera movement resumes when reduced motion is disabled\nPASS: Touch devices retain a small drift without responding to touch gestures\nPASS: Narrow layouts limit camera travel and preserve the original artwork size\nPASS: Hidden pages pause the camera\nPASS: Offscreen heroes pause the camera\nPASS: The camera resumes when the hero returns onscreen\nPASS: Unmount cancels the camera and cleans up its transforms",
+      "errors": []
+    },
+    {
+      "suite": "silk",
+      "status": "passed",
+      "text": "PASS: Background stays at DPR 1\nPASS: Strict Mode renders real satin folds without WebGL errors, including with glow off\nPASS: Decorative background stays hidden from assistive technology\nPASS: Silk motion changes the rendered pixels\nPASS: Live reduced motion freezes the satin without a render loop\nPASS: Motion resumes when the preference changes back\nPASS: Hidden pages stop rendering\nPASS: Visible pages resume rendering\nPASS: Offscreen backgrounds stop rendering\nPASS: Onscreen backgrounds resume rendering\nPASS: Context loss exposes the CSS silver fallback\nPASS: Unavailable WebGL keeps the CSS fallback visible",
+      "errors": []
+    },
+    {
+      "suite": "tech-text",
+      "status": "passed",
+      "text": "PASS: Labels and guides at 96px use normal spacing\nPASS: Labels and guides at 42px use normal spacing\nPASS: Labels and guides at 32px use normal spacing",
+      "errors": []
+    }
+  ],
+  "errors": [],
+  "requests": []
+}

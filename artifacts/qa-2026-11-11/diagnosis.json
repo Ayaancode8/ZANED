@@ -1,0 +1,82 @@
+{
+  "console": [
+    {
+      "text": "Failed to load resource: the server responded with a status of 404 (Not Found)",
+      "location": {
+        "url": "http://127.0.0.1:4173/favicon.ico",
+        "line": 0,
+        "column": 0,
+        "lineNumber": 0,
+        "columnNumber": 0
+      }
+    }
+  ],
+  "network": [
+    {
+      "url": "http://127.0.0.1:4173/favicon.ico",
+      "status": 404
+    }
+  ],
+  "motion": [
+    {
+      "error": "page.waitForFunction: Timeout 30000ms exceeded."
+    },
+    {
+      "trial": 1,
+      "elapsed": 30008,
+      "matches": true,
+      "transform": "perspective(1400px) translateY(26px) rotateX(-0.0128809deg) rotateY(0.0261138deg) scale(1.07)",
+      "events": [
+        {
+          "at": 3735.300000000745,
+          "matches": true
+        }
+      ],
+      "textFallback": [
+        "visible",
+        "visible"
+      ]
+    },
+    {
+      "error": "page.waitForFunction: Timeout 30000ms exceeded."
+    },
+    {
+      "trial": 2,
+      "elapsed": 30009,
+      "matches": true,
+      "transform": "perspective(1400px) translateY(26px) rotateX(-0.0128809deg) rotateY(0.0261138deg) scale(1.07)",
+      "events": [
+        {
+          "at": 3735.300000000745,
+          "matches": true
+        }
+      ],
+      "textFallback": [
+        "visible",
+        "visible"
+      ]
+    },
+    {
+      "error": "page.waitForFunction: Timeout 30000ms exceeded."
+    },
+    {
+      "trial": 3,
+      "elapsed": 30010,
+      "matches": true,
+      "transform": "perspective(1400px) translateY(26px) rotateX(-0.0128809deg) rotateY(0.0261138deg) scale(1.07)",
+      "events": [
+        {
+          "at": 3735.300000000745,
+          "matches": true
+        }
+      ],
+      "textFallback": [
+        "visible",
+        "visible"
+      ]
+    }
+  ],
+  "favicon": {
+    "status": 404
+  }
+}

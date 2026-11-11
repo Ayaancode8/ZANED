@@ -1,0 +1,190 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>GridDistortion browser checks</title>
+    <style>
+      body { margin: 24px; font: 16px/1.5 system-ui, sans-serif; background: #f1f2f2; color: #202629; }
+      #fixture { width: 160px; height: 160px; background: #cbd0d2; }
+      [data-status="failed"] { color: #9b2424; }
+    </style>
+  </head>
+  <body>
+    <h1>GridDistortion browser checks</h1>
+    <p>Exercises the real WebGL renderer inside React Strict Mode.</p>
+    <button id="run" type="button">Run checks</button>
+    <ol id="results"></ol>
+    <div id="fixture"></div>
+    <script type="module">
+      import React from 'react';
+      import { createRoot } from 'react-dom/client';
+      import GridDistortion from '/src/components/GridDistortion.jsx';
+
+      const fixture = document.querySelector('#fixture');
+      const results = document.querySelector('#results');
+      const run = document.querySelector('#run');
+      const pause = ms => new Promise(resolve => setTimeout(resolve, ms));
+      async function until(predicate) {
+        const deadline = performance.now() + 8000;
+        while (!predicate()) {
+          if (performance.now() > deadline) throw new Error('Timed out waiting for the renderer');
+          await pause(20);
+        }
+      }
+      function check(condition, label) {
+        if (!condition) throw new Error(label);
+        const item = document.createElement('li');
+        item.textContent = `PASS: ${label}`;
+        results.append(item);
+      }
+
+      run.addEventListener('click', async () => {
+        run.disabled = true;
+        results.replaceChildren();
+        results.dataset.status = 'running';
+        const getContext = HTMLCanvasElement.prototype.getContext;
+        const drawArrays = WebGL2RenderingContext.prototype.drawArrays;
+        const matchMedia = window.matchMedia;
+        const hiddenDescriptor = Object.getOwnPropertyDescriptor(document, 'hidden');
+        const dprDescriptor = Object.getOwnPropertyDescriptor(window, 'devicePixelRatio');
+        let dpr = 1;
+        Object.defineProperty(window, 'devicePixelRatio', { configurable: true, get: () => dpr });
+        const motion = new EventTarget();
+        motion.matches = false;
+        window.matchMedia = query => query === '(prefers-reduced-motion: reduce)' ? motion : matchMedia.call(window, query);
+        let hidden = false;
+        Object.defineProperty(document, 'hidden', { configurable: true, get: () => hidden });
+        let samples = 0;
+        let fingerprint = 0;
+        let cornerAlpha = 0;
+        let centerAlpha = 0;
+        let chromaticPixels = 0;
+        let context;
+        WebGL2RenderingContext.prototype.drawArrays = function (...args) {
+          const result = drawArrays.apply(this, args);
+          if (this.canvas.classList.contains('distortion-container__canvas')) {
+            context = this;
+            const pixels = new Uint8Array(this.drawingBufferWidth * this.drawingBufferHeight * 4);
+            this.readPixels(0, 0, this.drawingBufferWidth, this.drawingBufferHeight, this.RGBA, this.UNSIGNED_BYTE, pixels);
+            cornerAlpha = pixels[3];
+            const center = (Math.floor(this.drawingBufferHeight / 2) * this.drawingBufferWidth + Math.floor(this.drawingBufferWidth / 2)) * 4;
+            centerAlpha = pixels[center + 3];
+            chromaticPixels = 0;
+            for (let i = 0; i < pixels.length; i += 4) {
+              if (pixels[i + 3] === 255 && (Math.abs(pixels[i] - pixels[i + 1]) > 16 || Math.abs(pixels[i + 1] - pixels[i + 2]) > 16)) chromaticPixels++;
+            }
+            fingerprint = 0;
+            for (let i = 0; i < pixels.length; i++) fingerprint = Math.imul(fingerprint ^ pixels[i], 16777619) >>> 0;
+            samples++;
+          }
+          return result;
+        };
+        const root = createRoot(fixture);
+        let key = 0;
+        const image = document.createElement('canvas');
+        image.width = image.height = 160;
+        const paint = image.getContext('2d');
+        for (let y = 32; y < 128; y += 8) {
+          for (let x = 32; x < 128; x += 8) {
+            paint.fillStyle = (x + y) % 16 ? '#202020' : '#f2f2f2';
+            paint.fillRect(x, y, 8, 8);
+          }
+        }
+        const imageSrc = image.toDataURL();
+        const mount = async props => {
+          const previous = fixture.firstElementChild;
+          root.render(React.createElement(React.StrictMode, null,
+            React.createElement(GridDistortion, { imageSrc, key: ++key, idle: 0, intro: false, relaxation: 0.9, grid: 50, radius: 0.12, strength: 0.3, softness: 0, chroma: 0.6, ...props })));
+          await until(() => fixture.firstElementChild !== previous);
+        };
+        const ready = () => fixture.querySelector('.distortion-container')?.dataset.ready === 'true';
+        const pointer = (type, x, y) => {
+          const rect = fixture.getBoundingClientRect();
+          window.dispatchEvent(new PointerEvent(type, { clientX: rect.x + x, clientY: rect.y + y, pointerType: 'mouse' }));
+        };
+        try {
+          await mount();
+          await until(ready);
+          const canvas = fixture.querySelector('canvas');
+          check(canvas.width === 320 && canvas.height === 320, 'Standard screens supersample artwork at 2x resolution');
+          dpr = 3;
+          window.dispatchEvent(new Event('resize'));
+          await until(() => canvas.width === 480 && canvas.height === 480);
+          check(true, 'Retina phones render artwork at their full 3x resolution');
+          dpr = 4;
+          window.dispatchEvent(new Event('resize'));
+          check(canvas.width === 480 && canvas.height === 480, 'Higher densities stay capped at 3x to bound GPU work');
+          dpr = 1;
+          window.dispatchEvent(new Event('resize'));
+          check(cornerAlpha === 0 && centerAlpha === 255, 'Transparent corners and opaque artwork survive the shader');
+          const initial = fingerprint;
+          pointer('pointermove', 60, 80);
+          pointer('pointermove', 100, 80);
+          await until(() => fingerprint !== initial);
+          check(true, 'Pointer movement deforms rendered image pixels');
+          check(chromaticPixels > 0, 'Displaced monochrome pixels split into RGB channels');
+
+          await mount({ strength: 0 });
+          await until(ready);
+          const beforeClick = fingerprint;
+          pointer('pointerdown', 80, 80);
+          await until(() => fingerprint !== beforeClick);
+          check(true, 'Click ripple deforms pixels independently of pointer strength');
+
+          await mount({ idle: 0.3 });
+          await until(ready);
+          motion.matches = true;
+          motion.dispatchEvent(new Event('change'));
+          const reducedSamples = samples;
+          await pause(150);
+          check(samples === reducedSamples, 'Live reduced motion stops drawing');
+          motion.matches = false;
+          motion.dispatchEvent(new Event('change'));
+          await until(() => samples > reducedSamples);
+          check(true, 'Motion resumes when the preference changes back');
+
+          hidden = true;
+          document.dispatchEvent(new Event('visibilitychange'));
+          const hiddenSamples = samples;
+          await pause(150);
+          check(samples === hiddenSamples, 'Hidden pages stop drawing');
+          hidden = false;
+          document.dispatchEvent(new Event('visibilitychange'));
+          await until(() => samples > hiddenSamples);
+          check(true, 'Visible pages resume drawing');
+
+          const loss = context.getExtension('WEBGL_lose_context');
+          if (!loss) throw new Error('WebGL context-loss testing is unavailable');
+          loss.loseContext();
+          await until(() => !ready());
+          check(getComputedStyle(fixture.querySelector('img')).visibility === 'visible', 'Context loss reveals the original image');
+
+          HTMLCanvasElement.prototype.getContext = function (type, ...args) {
+            return type === 'webgl2' ? null : getContext.call(this, type, ...args);
+          };
+          await mount();
+          await until(() => fixture.querySelector('.distortion-container')?.dataset.ready === 'false');
+          check(getComputedStyle(fixture.querySelector('img')).visibility === 'visible' &&
+            getComputedStyle(fixture.querySelector('canvas')).visibility === 'hidden', 'Unavailable WebGL keeps the original image visible');
+          results.dataset.status = 'passed';
+        } catch (error) {
+          results.dataset.status = 'failed';
+          const item = document.createElement('li');
+          item.textContent = `FAIL: ${error.message}`;
+          results.append(item);
+        } finally {
+          root.unmount();
+          HTMLCanvasElement.prototype.getContext = getContext;
+          WebGL2RenderingContext.prototype.drawArrays = drawArrays;
+          window.matchMedia = matchMedia;
+          if (dprDescriptor) Object.defineProperty(window, 'devicePixelRatio', dprDescriptor);
+          else delete window.devicePixelRatio;
+          if (hiddenDescriptor) Object.defineProperty(document, 'hidden', hiddenDescriptor);
+          else delete document.hidden;
+          run.disabled = false;
+        }
+      });
+    </script>
+  </body>
+</html>
